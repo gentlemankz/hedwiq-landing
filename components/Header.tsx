@@ -14,7 +14,7 @@ export function Header() {
               height={30}
               priority
             />
-            <span className="font-koho text-md font-bold text-foreground">
+            <span className="text-md font-bold text-foreground">
               HEDWIQ
             </span>
           </div>
