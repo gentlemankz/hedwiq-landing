@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { FakeMeetingRoom } from "@/components/FakeMeetingRoom";
 
 const trustedCompanies = [
   { name: "Company 1", logo: "/globe.svg" },
@@ -83,43 +83,15 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Image - Below content */}
+          {/* Meeting Room Interface - Below content */}
           <div className="relative w-full">
-            <Card className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[2/1] w-full overflow-hidden">
-              {/* Placeholder gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-muted via-muted/50 to-background" />
-
-              {/* Placeholder content */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                    <svg
-                      className="w-10 h-10 text-muted-foreground"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-muted-foreground text-sm">Product Image</p>
-                </div>
-              </div>
-
-              {/* Decorative elements */}
-              <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-green-500" />
-              <div className="absolute top-4 right-10 w-3 h-3 rounded-full bg-yellow-500" />
-              <div className="absolute top-4 right-16 w-3 h-3 rounded-full bg-red-500" />
-            </Card>
+            <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] xl:h-[600px] w-full">
+              <FakeMeetingRoom />
+            </div>
 
             {/* Decorative blur elements */}
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
           </div>
         </div>
       </div>
