@@ -612,10 +612,10 @@ function FakeAgendaPanel({
 function FakeMeetingHeader() {
   return (
     <div className="p-2 sm:p-3 border-b">
-      {/* Meeting Image */}
+      {/* Meeting Image - using original app image */}
       <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden mb-2 sm:mb-3 bg-muted">
         <img
-          src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=225&fit=crop"
+          src="/image1.png"
           alt="Meeting"
           className="w-full h-full object-cover"
         />
@@ -642,21 +642,88 @@ interface TranscriptionAnimationState {
 
 function FakeTranscriptionPanel({
   animationState,
-  scrollRef,
 }: {
   animationState: TranscriptionAnimationState;
-  scrollRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const visibleTranscriptions = FAKE_TRANSCRIPTIONS.slice(0, animationState.visibleCount);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const userScrolledRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollTopRef = useRef(0);
+
+  // Auto-scroll within the container only (not the page)
+  useEffect(() => {
+    if (!userScrolledRef.current && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      // Smooth scroll to bottom within the container only
+      const targetScroll = container.scrollHeight - container.clientHeight;
+      const startScroll = container.scrollTop;
+      const distance = targetScroll - startScroll;
+
+      if (distance > 0) {
+        // Animate scroll over 300ms
+        const duration = 300;
+        const startTime = performance.now();
+
+        const animateScroll = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          // Ease out cubic
+          const easeOut = 1 - Math.pow(1 - progress, 3);
+          container.scrollTop = startScroll + distance * easeOut;
+
+          if (progress < 1) {
+            requestAnimationFrame(animateScroll);
+          }
+        };
+
+        requestAnimationFrame(animateScroll);
+      }
+    }
+  }, [animationState.visibleCount, animationState.typingIndicator]);
+
+  // Handle manual scroll - pause auto-scroll temporarily
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const currentScrollTop = container.scrollTop;
+
+    // Only consider it manual scroll if user scrolled UP (against auto-scroll direction)
+    if (currentScrollTop < lastScrollTopRef.current - 5) {
+      userScrolledRef.current = true;
+
+      // Reset after 4 seconds of no manual scrolling
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        userScrolledRef.current = false;
+      }, 4000);
+    }
+
+    lastScrollTopRef.current = currentScrollTop;
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Meeting Header with Image */}
       <FakeMeetingHeader />
 
-      {/* Transcriptions */}
-      <ScrollArea className="flex-1 min-h-0">
-        <div ref={scrollRef} className="p-2 sm:p-3 space-y-3 sm:space-y-4">
+      {/* Transcriptions - custom scroll container instead of ScrollArea to prevent page scroll */}
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden transcription-scroll"
+      >
+        <div className="p-2 sm:p-3 space-y-3 sm:space-y-4">
           {visibleTranscriptions.map((entry, index) => (
             <FakeTranscriptionMessage
               key={entry.id}
@@ -687,8 +754,7 @@ function FakeTranscriptionPanel({
             </div>
           )}
         </div>
-        <ScrollBar className="w-2 bg-muted/50" />
-      </ScrollArea>
+      </div>
     </div>
   );
 }
@@ -774,8 +840,6 @@ function useMeetingAnimation() {
 
   const [speakingParticipantId, setSpeakingParticipantId] = useState<string | null>(null);
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
-
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Use refs to track animation state without causing re-renders
   const currentIndexRef = useRef(-1);
@@ -890,13 +954,6 @@ function useMeetingAnimation() {
         // Update agenda based on transcription index
         updateAgendaState(newIndex);
 
-        // Auto-scroll
-        setTimeout(() => {
-          if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-          }
-        }, 100);
-
         phaseRef.current = "insights";
         animationTimeoutRef.current = setTimeout(runAnimation, ANIMATION_CONFIG.insightDelay);
       } else if (phase === "insights") {
@@ -946,7 +1003,6 @@ function useMeetingAnimation() {
     agendaItems,
     speakingParticipantId,
     elapsedMinutes,
-    scrollRef,
   };
 }
 
@@ -960,7 +1016,6 @@ export function FakeMeetingRoom() {
     agendaItems,
     speakingParticipantId,
     elapsedMinutes,
-    scrollRef,
   } = useMeetingAnimation();
 
   return (
@@ -994,7 +1049,7 @@ export function FakeMeetingRoom() {
 
           {/* Transcription Panel - Right side */}
           <div className="flex-1 h-full overflow-hidden">
-            <FakeTranscriptionPanel animationState={transcriptionState} scrollRef={scrollRef} />
+            <FakeTranscriptionPanel animationState={transcriptionState} />
           </div>
         </div>
       </div>
