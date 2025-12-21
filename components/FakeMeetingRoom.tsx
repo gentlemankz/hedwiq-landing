@@ -12,6 +12,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useInView } from "@/lib/useInView";
 import {
   Mic,
   MicOff,
@@ -825,7 +826,7 @@ function MacWindowFrame({ children }: { children: React.ReactNode }) {
 // Animation Hook
 // ============================================================================
 
-function useMeetingAnimation() {
+function useMeetingAnimation(isInView: boolean) {
   // Animation state
   const [transcriptionState, setTranscriptionState] = useState<TranscriptionAnimationState>({
     visibleCount: 0,
@@ -846,12 +847,13 @@ function useMeetingAnimation() {
   const phaseRef = useRef<"typing" | "showing" | "insights">("typing");
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const speakingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const isAnimatingRef = useRef(false);
+  const hasStartedRef = useRef(false);
 
-  // Main animation loop - runs only once on mount
+  // Main animation loop - only starts when component is in view
   useEffect(() => {
-    if (isAnimatingRef.current) return;
-    isAnimatingRef.current = true;
+    // Only start animation when in view and hasn't started yet
+    if (!isInView || hasStartedRef.current) return;
+    hasStartedRef.current = true;
 
     const getNextTypingIndicator = (index: number) => {
       const nextIndex = index + 1;
@@ -984,7 +986,7 @@ function useMeetingAnimation() {
     // Start animation after initial delay
     const startDelay = setTimeout(() => {
       runAnimation();
-    }, 1500);
+    }, 500);
 
     return () => {
       clearTimeout(startDelay);
@@ -994,9 +996,8 @@ function useMeetingAnimation() {
       if (speakingTimeoutRef.current) {
         clearTimeout(speakingTimeoutRef.current);
       }
-      isAnimatingRef.current = false;
     };
-  }, []); // Empty dependency array - only run once
+  }, [isInView]);
 
   return {
     transcriptionState,
@@ -1011,16 +1012,22 @@ function useMeetingAnimation() {
 // ============================================================================
 
 export function FakeMeetingRoom() {
+  const [containerRef, isInView] = useInView<HTMLDivElement>({
+    threshold: 0.2,
+    rootMargin: "50px",
+  });
+
   const {
     transcriptionState,
     agendaItems,
     speakingParticipantId,
     elapsedMinutes,
-  } = useMeetingAnimation();
+  } = useMeetingAnimation(isInView);
 
   return (
-    <MacWindowFrame>
-      <div className="relative w-full h-full flex bg-background">
+    <div ref={containerRef} className="w-full h-full">
+      <MacWindowFrame>
+        <div className="relative w-full h-full flex bg-background">
         {/* Main video area */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Participant grid */}
@@ -1053,6 +1060,7 @@ export function FakeMeetingRoom() {
           </div>
         </div>
       </div>
-    </MacWindowFrame>
+      </MacWindowFrame>
+    </div>
   );
 }
