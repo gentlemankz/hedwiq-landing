@@ -8,14 +8,14 @@ export function Header() {
         <nav className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Image
-              src="/LOGO.svg"
+              src="/logo-main.svg"
               alt="Hedwiq Logo"
-              width={30}
-              height={30}
+              width={40}
+              height={40}
               priority
             />
-            <span className="text-md font-bold text-foreground">
-              HEDWIQ
+            <span className="text-md font-semibold text-foreground -mb-[5px]">
+              Hedwiq
             </span>
           </div>
           <div className="flex items-center gap-3">
