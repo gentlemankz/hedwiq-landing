@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedSection } from "@/components/AnimatedSection";
@@ -20,6 +21,7 @@ interface PricingTier {
   popular?: boolean;
   features: string[];
   cta: string;
+  ctaHref: string;
   ctaVariant?: "default" | "outline";
 }
 
@@ -37,6 +39,7 @@ const PRICING_TIERS: PricingTier[] = [
       "7-day meeting history",
     ],
     cta: "Get Started",
+    ctaHref: "/signup?plan=free",
     ctaVariant: "outline",
   },
   {
@@ -55,6 +58,7 @@ const PRICING_TIERS: PricingTier[] = [
       "300 Email Drafts",
     ],
     cta: "Start Free Trial",
+    ctaHref: "/signup?plan=pro",
     ctaVariant: "outline",
   },
   {
@@ -71,6 +75,7 @@ const PRICING_TIERS: PricingTier[] = [
       "90-day retention",
     ],
     cta: "Start Free Trial",
+    ctaHref: "/signup?plan=team",
   },
   {
     name: "Enterprise",
@@ -86,6 +91,7 @@ const PRICING_TIERS: PricingTier[] = [
       "Custom contracts",
     ],
     cta: "Contact Sales",
+    ctaHref: "/contact",
     ctaVariant: "outline",
   },
 ];
@@ -166,8 +172,9 @@ function PricingCard({
           tier.popular && "bg-blue-600 hover:bg-blue-700 text-white"
         )}
         size="lg"
+        asChild
       >
-        {tier.cta}
+        <Link href={tier.ctaHref}>{tier.cta}</Link>
       </Button>
     </div>
   );
@@ -184,35 +191,55 @@ function BillingToggle({
   isAnnual: boolean;
   onChange: (value: boolean) => void;
 }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onChange(!isAnnual);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center gap-3">
       <span
+        id="billing-monthly-label"
         className={cn(
-          "text-sm font-medium transition-colors",
+          "text-sm font-medium transition-colors cursor-pointer",
           !isAnnual ? "text-foreground" : "text-muted-foreground"
         )}
+        onClick={() => onChange(false)}
       >
         Monthly
       </span>
       <button
+        type="button"
+        role="switch"
+        aria-checked={isAnnual}
+        aria-labelledby="billing-toggle-label"
         onClick={() => onChange(!isAnnual)}
+        onKeyDown={handleKeyDown}
         className={cn(
-          "relative w-14 h-7 rounded-full transition-colors",
+          "relative w-14 h-7 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           isAnnual ? "bg-primary" : "bg-muted"
         )}
       >
+        <span className="sr-only">
+          {isAnnual ? "Switch to monthly billing" : "Switch to annual billing"}
+        </span>
         <div
           className={cn(
             "absolute top-1 w-5 h-5 rounded-full bg-white shadow-sm transition-transform",
             isAnnual ? "translate-x-8" : "translate-x-1"
           )}
+          aria-hidden="true"
         />
       </button>
       <span
+        id="billing-annual-label"
         className={cn(
-          "text-sm font-medium transition-colors",
+          "text-sm font-medium transition-colors cursor-pointer",
           isAnnual ? "text-foreground" : "text-muted-foreground"
         )}
+        onClick={() => onChange(true)}
       >
         Annual
       </span>

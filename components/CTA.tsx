@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "@/components/AnimatedSection";
 
@@ -34,8 +35,9 @@ export function CTA() {
               <Button
                 size="lg"
                 className="rounded-full px-10 py-6 text-lg bg-blue-600 text-white hover:bg-blue-700"
+                asChild
               >
-                Get Started
+                <Link href="/signup">Get Started</Link>
               </Button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -288,74 +289,72 @@ function FakeParticipantTile({
 
 function FakeControlBar() {
   return (
-    <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 bg-background/95 backdrop-blur border-t border-border">
-      {/* Microphone - enabled */}
-      <TooltipProvider>
+    <TooltipProvider delayDuration={300}>
+      <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 bg-background/95 backdrop-blur border-t border-border">
+        {/* Microphone - enabled */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="secondary"
               size="icon"
               className="size-9 sm:size-10 md:size-11 rounded-full"
+              aria-label="Mute microphone"
             >
-              <Mic className="size-4 sm:size-5" />
+              <Mic className="size-4 sm:size-5" aria-hidden="true" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Mute</TooltipContent>
         </Tooltip>
-      </TooltipProvider>
 
-      {/* Camera - disabled */}
-      <TooltipProvider>
+        {/* Camera - disabled */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="destructive"
               size="icon"
               className="size-9 sm:size-10 md:size-11 rounded-full"
+              aria-label="Start video"
             >
-              <VideoOff className="size-4 sm:size-5" />
+              <VideoOff className="size-4 sm:size-5" aria-hidden="true" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Start Video</TooltipContent>
         </Tooltip>
-      </TooltipProvider>
 
-      {/* Screen Share */}
-      <TooltipProvider>
+        {/* Screen Share */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="secondary"
               size="icon"
               className="size-9 sm:size-10 md:size-11 rounded-full"
+              aria-label="Share screen"
             >
-              <Monitor className="size-4 sm:size-5" />
+              <Monitor className="size-4 sm:size-5" aria-hidden="true" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Share Screen</TooltipContent>
         </Tooltip>
-      </TooltipProvider>
 
-      {/* Divider */}
-      <div className="mx-1 sm:mx-2 h-6 sm:h-8 w-px bg-border" />
+        {/* Divider */}
+        <div className="mx-1 sm:mx-2 h-6 sm:h-8 w-px bg-border" aria-hidden="true" />
 
-      {/* Leave */}
-      <TooltipProvider>
+        {/* Leave */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="destructive"
               size="icon"
               className="size-9 sm:size-10 md:size-11 rounded-full"
+              aria-label="Leave meeting"
             >
-              <PhoneOff className="size-4 sm:size-5" />
+              <PhoneOff className="size-4 sm:size-5" aria-hidden="true" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Leave Meeting</TooltipContent>
         </Tooltip>
-      </TooltipProvider>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
 
@@ -615,10 +614,12 @@ function FakeMeetingHeader() {
     <div className="p-2 sm:p-3 border-b">
       {/* Meeting Image - using original app image */}
       <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden mb-2 sm:mb-3 bg-muted">
-        <img
+        <Image
           src="/image1.png"
-          alt="Meeting"
-          className="w-full h-full object-cover"
+          alt="Meeting thumbnail"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 300px"
         />
       </div>
       {/* Meeting Info */}

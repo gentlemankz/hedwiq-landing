@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FakeMeetingRoom } from "@/components/FakeMeetingRoom";
@@ -55,11 +56,11 @@ export function Hero() {
               {/* CTA Buttons */}
               <AnimatedSection delay={300}>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" className="rounded-full px-8">
-                    Start Free Trial
+                  <Button size="lg" className="rounded-full px-8" asChild>
+                    <Link href="/signup">Start Free Trial</Link>
                   </Button>
-                  <Button variant="outline" size="lg" className="rounded-full px-8">
-                    Watch Demo
+                  <Button variant="outline" size="lg" className="rounded-full px-8" asChild>
+                    <Link href="/#demo">Watch Demo</Link>
                   </Button>
                 </div>
               </AnimatedSection>
