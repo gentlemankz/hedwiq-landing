@@ -4,8 +4,8 @@ import { Separator } from "@/components/ui/separator";
 
 const footerLinks = {
   product: [
-    { label: "Features", href: "#features" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "Features", href: "/#features" },
+    { label: "Pricing", href: "/pricing" },
     { label: "Integrations", href: "#integrations" },
   ],
   company: [
