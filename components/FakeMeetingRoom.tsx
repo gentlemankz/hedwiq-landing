@@ -28,6 +28,8 @@ import {
   Lightbulb,
   CheckCircle,
   ClipboardList,
+  Users,
+  MessageSquareText,
 } from "lucide-react";
 
 // ============================================================================
@@ -362,21 +364,24 @@ function FakeAgendaItem({
   item,
   isCurrent,
   isLast,
+  isFullScreen = false,
 }: {
   item: FakeAgendaItem;
   isCurrent: boolean;
   isLast: boolean;
+  isFullScreen?: boolean;
 }) {
   const isCompleted = item.status === "completed";
   const isInProgress = item.status === "in_progress";
 
   return (
-    <div className="flex gap-2 sm:gap-3 pb-3 sm:pb-4">
+    <div className={cn("flex", isFullScreen ? "gap-3 pb-5" : "gap-2 sm:gap-3 pb-3 sm:pb-4")}>
       {/* Status indicator + connector */}
-      <div className="relative flex flex-col items-center shrink-0 w-4 sm:w-5">
+      <div className={cn("relative flex flex-col items-center shrink-0", isFullScreen ? "w-6" : "w-4 sm:w-5")}>
         <div
           className={cn(
-            "relative z-10 size-4 sm:size-5 rounded-full flex items-center justify-center shrink-0 transition-all duration-500",
+            "relative z-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-500",
+            isFullScreen ? "size-6" : "size-4 sm:size-5",
             item.status === "pending" && "border-2 border-muted-foreground/40 bg-transparent",
             isInProgress && "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]",
             isCompleted && "bg-green-500"
@@ -386,7 +391,7 @@ function FakeAgendaItem({
             <div className="absolute inset-0 rounded-full bg-primary animate-ping opacity-30" />
           )}
           {isCompleted && (
-            <Check className="size-2.5 sm:size-3 text-white animate-scale-in" strokeWidth={3} />
+            <Check className={cn("text-white animate-scale-in", isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} strokeWidth={3} />
           )}
         </div>
 
@@ -405,14 +410,15 @@ function FakeAgendaItem({
       <div
         className={cn(
           "flex-1 min-w-0 rounded-md transition-all duration-300",
-          isCurrent && "bg-primary/5 px-2 sm:px-3 py-1 -my-1"
+          isCurrent && (isFullScreen ? "bg-primary/5 px-3 py-1.5 -my-1.5" : "bg-primary/5 px-2 sm:px-3 py-1 -my-1")
         )}
       >
-        <div className="space-y-0.5 sm:space-y-1">
-          <div className="flex items-start gap-1 sm:gap-2">
+        <div className={cn(isFullScreen ? "space-y-1.5" : "space-y-0.5 sm:space-y-1")}>
+          <div className={cn("flex items-start", isFullScreen ? "gap-2" : "gap-1 sm:gap-2")}>
             <span
               className={cn(
-                "text-xs sm:text-sm font-medium leading-tight transition-all duration-300",
+                "font-medium leading-tight transition-all duration-300",
+                isFullScreen ? "text-sm" : "text-xs sm:text-sm",
                 isCompleted && "text-muted-foreground line-through",
                 isCurrent && "text-primary font-semibold",
                 !isCompleted && !isCurrent && "text-foreground"
@@ -421,24 +427,33 @@ function FakeAgendaItem({
               {item.title}
             </span>
             {isCurrent && (
-              <span className="shrink-0 text-[8px] sm:text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 px-1 sm:px-1.5 py-0.5 rounded animate-pulse">
+              <span className={cn(
+                "shrink-0 font-medium uppercase tracking-wide text-primary bg-primary/10 rounded animate-pulse",
+                isFullScreen ? "text-[10px] px-1.5 py-0.5" : "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5"
+              )}>
                 Now
               </span>
             )}
             {isCompleted && (
-              <span className="shrink-0 text-[8px] sm:text-[10px] font-medium uppercase tracking-wide text-green-600 bg-green-100 px-1 sm:px-1.5 py-0.5 rounded animate-fade-in">
+              <span className={cn(
+                "shrink-0 font-medium uppercase tracking-wide text-green-600 bg-green-100 rounded animate-fade-in",
+                isFullScreen ? "text-[10px] px-1.5 py-0.5" : "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5"
+              )}>
                 Done
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground">
-            <span className="flex items-center gap-0.5 sm:gap-1">
-              <Clock className="size-2.5 sm:size-3" />
+          <div className={cn(
+            "flex items-center text-muted-foreground",
+            isFullScreen ? "gap-3 text-xs" : "gap-2 sm:gap-3 text-[10px] sm:text-xs"
+          )}>
+            <span className={cn("flex items-center", isFullScreen ? "gap-1" : "gap-0.5 sm:gap-1")}>
+              <Clock className={cn(isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} />
               {item.duration}
             </span>
-            <span className="flex items-center gap-0.5 sm:gap-1">
-              <User className="size-2.5 sm:size-3" />
+            <span className={cn("flex items-center", isFullScreen ? "gap-1" : "gap-0.5 sm:gap-1")}>
+              <User className={cn(isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} />
               {item.presenter}
             </span>
           </div>
@@ -452,10 +467,12 @@ function FakeInsightBadge({
   type,
   label,
   content,
+  showLabel = false,
 }: {
   type: "action_item" | "key_insight" | "decision";
   label: string;
   content?: string;
+  showLabel?: boolean;
 }) {
   const config = {
     action_item: {
@@ -486,7 +503,7 @@ function FakeInsightBadge({
       )}
     >
       <Icon className="size-2.5 sm:size-3" />
-      <span className="hidden sm:inline">{label}</span>
+      <span className={showLabel ? "inline" : "hidden sm:inline"}>{label}</span>
     </span>
   );
 
@@ -512,36 +529,43 @@ function FakeTranscriptionMessage({
   entry,
   isNew,
   showInsights,
+  isFullScreen = false,
 }: {
   entry: (typeof FAKE_TRANSCRIPTIONS)[0];
   isNew?: boolean;
   showInsights?: boolean;
+  isFullScreen?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "flex gap-2 sm:gap-3 transition-all duration-500",
+        "flex transition-all duration-500",
+        isFullScreen ? "gap-3" : "gap-2 sm:gap-3",
         isNew ? "animate-fade-in-up" : ""
       )}
     >
-      <Avatar className="size-6 sm:size-8 shrink-0">
+      <Avatar className={cn("shrink-0", isFullScreen ? "size-9" : "size-6 sm:size-8")}>
         <AvatarImage src={entry.avatar} alt={entry.speaker} />
-        <AvatarFallback className="text-[10px] sm:text-xs">{entry.initials}</AvatarFallback>
+        <AvatarFallback className={cn(isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>{entry.initials}</AvatarFallback>
       </Avatar>
-      <div className="flex-1 space-y-0.5 sm:space-y-1">
+      <div className={cn("flex-1", isFullScreen ? "space-y-1" : "space-y-0.5 sm:space-y-1")}>
         <div className="flex items-center justify-between">
-          <p className="text-xs sm:text-sm font-medium leading-none">{entry.speaker}</p>
-          <span className="text-[10px] sm:text-xs text-muted-foreground">{entry.timestamp}</span>
+          <p className={cn("font-medium leading-none", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>{entry.speaker}</p>
+          <span className={cn("text-muted-foreground", isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>{entry.timestamp}</span>
         </div>
-        <p className="text-xs sm:text-sm text-foreground">{entry.text}</p>
+        <p className={cn("text-foreground", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>{entry.text}</p>
         {entry.insights.length > 0 && showInsights && (
-          <div className="flex flex-wrap gap-1 sm:gap-1.5 mt-1 sm:mt-2 animate-fade-in">
+          <div className={cn(
+            "flex flex-wrap animate-fade-in",
+            isFullScreen ? "gap-1.5 mt-2" : "gap-1 sm:gap-1.5 mt-1 sm:mt-2"
+          )}>
             {entry.insights.map((insight, idx) => (
               <FakeInsightBadge
                 key={idx}
                 type={insight.type}
                 label={insight.label}
                 content={insight.content}
+                showLabel={isFullScreen}
               />
             ))}
           </div>
@@ -554,9 +578,11 @@ function FakeTranscriptionMessage({
 function FakeAgendaPanel({
   agendaItems,
   elapsedMinutes,
+  isFullScreen = false,
 }: {
   agendaItems: FakeAgendaItem[];
   elapsedMinutes: number;
+  isFullScreen?: boolean;
 }) {
   const completedItems = agendaItems.filter(
     (i) => i.status === "completed"
@@ -574,32 +600,36 @@ function FakeAgendaPanel({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="p-2 sm:p-3 border-b space-y-2 sm:space-y-3">
+      <div className={cn(
+        "border-b",
+        isFullScreen ? "p-4 space-y-3" : "p-2 sm:p-3 space-y-2 sm:space-y-3"
+      )}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <ListTodo className="size-3.5 sm:size-4 text-muted-foreground" />
-            <span className="text-xs sm:text-sm font-medium">Agenda Progress</span>
+          <div className={cn("flex items-center", isFullScreen ? "gap-2" : "gap-1.5 sm:gap-2")}>
+            <ListTodo className={cn("text-muted-foreground", isFullScreen ? "size-5" : "size-3.5 sm:size-4")} />
+            <span className={cn("font-medium", isFullScreen ? "text-base" : "text-xs sm:text-sm")}>Agenda Progress</span>
           </div>
-          <span className="text-xs sm:text-sm text-muted-foreground">
+          <span className={cn("text-muted-foreground", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>
             {completedItems}/{agendaItems.length}
           </span>
         </div>
-        <Progress value={progressPercentage} className="h-1.5 sm:h-2 transition-all duration-500" />
-        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground">
-          <Clock className="size-2.5 sm:size-3" />
+        <Progress value={progressPercentage} className={cn("transition-all duration-500", isFullScreen ? "h-2.5" : "h-1.5 sm:h-2")} />
+        <div className={cn("flex items-center gap-1 text-muted-foreground", isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>
+          <Clock className={cn(isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} />
           <span>Est. remaining: {remainingMinutes} min</span>
         </div>
       </div>
 
       {/* Items */}
       <ScrollArea className="flex-1 min-h-0">
-        <div className="p-2 sm:p-3">
+        <div className={cn(isFullScreen ? "p-4" : "p-2 sm:p-3")}>
           {agendaItems.map((item, index) => (
             <FakeAgendaItem
               key={item.id}
               item={item}
               isCurrent={item.status === "in_progress"}
               isLast={index === agendaItems.length - 1}
+              isFullScreen={isFullScreen}
             />
           ))}
         </div>
@@ -609,11 +639,14 @@ function FakeAgendaPanel({
   );
 }
 
-function FakeMeetingHeader() {
+function FakeMeetingHeader({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="p-2 sm:p-3 border-b">
+    <div className={cn("border-b", compact ? "p-2" : "p-3")}>
       {/* Meeting Image - using original app image */}
-      <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden mb-2 sm:mb-3 bg-muted">
+      <div className={cn(
+        "relative w-full rounded-lg overflow-hidden bg-muted",
+        compact ? "aspect-[16/9] mb-2" : "aspect-[21/9] mb-3"
+      )}>
         <Image
           src="/image1.png"
           alt="Meeting thumbnail"
@@ -623,8 +656,18 @@ function FakeMeetingHeader() {
         />
       </div>
       {/* Meeting Info */}
-      <h3 className="text-xs sm:text-sm font-medium truncate">Quarterly Digital Marketing Strategy...</h3>
-      <p className="text-[10px] sm:text-xs text-muted-foreground">20.12.2025 • 02:35</p>
+      <h3 className={cn(
+        "font-medium truncate",
+        compact ? "text-xs" : "text-sm"
+      )}>
+        Quarterly Digital Marketing Strategy...
+      </h3>
+      <p className={cn(
+        "text-muted-foreground",
+        compact ? "text-[10px]" : "text-xs"
+      )}>
+        20.12.2025 • 02:35
+      </p>
     </div>
   );
 }
@@ -644,8 +687,10 @@ interface TranscriptionAnimationState {
 
 function FakeTranscriptionPanel({
   animationState,
+  isFullScreen = false,
 }: {
   animationState: TranscriptionAnimationState;
+  isFullScreen?: boolean;
 }) {
   const visibleTranscriptions = FAKE_TRANSCRIPTIONS.slice(0, animationState.visibleCount);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -716,8 +761,8 @@ function FakeTranscriptionPanel({
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Meeting Header with Image */}
-      <FakeMeetingHeader />
+      {/* Meeting Header with Image - compact in sidebar, expanded on mobile full screen */}
+      <FakeMeetingHeader compact={!isFullScreen} />
 
       {/* Transcriptions - custom scroll container instead of ScrollArea to prevent page scroll */}
       <div
@@ -725,31 +770,38 @@ function FakeTranscriptionPanel({
         onScroll={handleScroll}
         className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden transcription-scroll"
       >
-        <div className="p-2 sm:p-3 space-y-3 sm:space-y-4">
+        <div className={cn(
+          "space-y-3",
+          isFullScreen ? "p-3 space-y-4" : "p-2 sm:p-3 sm:space-y-4"
+        )}>
           {visibleTranscriptions.map((entry, index) => (
             <FakeTranscriptionMessage
               key={entry.id}
               entry={entry}
               isNew={index === animationState.newestIndex}
               showInsights={index < animationState.insightsVisibleUpTo}
+              isFullScreen={isFullScreen}
             />
           ))}
 
           {/* Typing indicator */}
           {animationState.typingIndicator && (
-            <div className="flex gap-2 sm:gap-3 opacity-60 animate-fade-in">
-              <Avatar className="size-6 sm:size-8 shrink-0">
+            <div className={cn(
+              "flex opacity-60 animate-fade-in",
+              isFullScreen ? "gap-3" : "gap-2 sm:gap-3"
+            )}>
+              <Avatar className={cn("shrink-0", isFullScreen ? "size-9" : "size-6 sm:size-8")}>
                 <AvatarImage src={animationState.typingIndicator.avatar} alt={animationState.typingIndicator.speaker} />
-                <AvatarFallback className="text-[10px] sm:text-xs">{animationState.typingIndicator.initials}</AvatarFallback>
+                <AvatarFallback className={cn(isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>{animationState.typingIndicator.initials}</AvatarFallback>
               </Avatar>
-              <div className="flex-1 space-y-0.5 sm:space-y-1">
-                <p className="text-xs sm:text-sm font-medium leading-none">
+              <div className={cn("flex-1", isFullScreen ? "space-y-1" : "space-y-0.5 sm:space-y-1")}>
+                <p className={cn("font-medium leading-none", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>
                   {animationState.typingIndicator.speaker}
-                  <span className="ml-2 text-[10px] sm:text-xs text-muted-foreground italic">
+                  <span className={cn("ml-2 text-muted-foreground italic", isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>
                     typing...
                   </span>
                 </p>
-                <p className="text-xs sm:text-sm text-foreground italic">
+                <p className={cn("text-foreground italic", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>
                   <TypingText text={animationState.typingIndicator.text} />
                 </p>
               </div>
@@ -819,6 +871,73 @@ function MacWindowFrame({ children }: { children: React.ReactNode }) {
       <div className="flex-1 min-h-0">
         {children}
       </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Mobile Tab Navigation
+// ============================================================================
+
+type MobileTab = "meeting" | "agenda" | "transcript";
+
+function MobileTabBar({
+  activeTab,
+  onTabChange,
+  agendaProgress,
+  hasNewTranscription,
+}: {
+  activeTab: MobileTab;
+  onTabChange: (tab: MobileTab) => void;
+  agendaProgress: { completed: number; total: number };
+  hasNewTranscription: boolean;
+}) {
+  const tabs: { id: MobileTab; label: string; icon: React.ReactNode; badge?: React.ReactNode }[] = [
+    {
+      id: "meeting",
+      label: "Meeting",
+      icon: <Users className="size-4" />,
+    },
+    {
+      id: "agenda",
+      label: "Agenda",
+      icon: <ListTodo className="size-4" />,
+      badge: agendaProgress.completed > 0 && (
+        <span className="absolute -top-1 -right-1 size-4 bg-green-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+          {agendaProgress.completed}
+        </span>
+      ),
+    },
+    {
+      id: "transcript",
+      label: "Live",
+      icon: <MessageSquareText className="size-4" />,
+      badge: hasNewTranscription && (
+        <span className="absolute -top-0.5 -right-0.5 size-2 bg-primary rounded-full animate-pulse" />
+      ),
+    },
+  ];
+
+  return (
+    <div className="flex items-center justify-around bg-muted/50 border-t border-border p-1 md:hidden">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onTabChange(tab.id)}
+          className={cn(
+            "relative flex-1 flex flex-col items-center gap-0.5 py-2 px-3 rounded-lg transition-all duration-200",
+            activeTab === tab.id
+              ? "bg-background text-primary shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <div className="relative">
+            {tab.icon}
+            {tab.badge}
+          </div>
+          <span className="text-[10px] font-medium">{tab.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -1018,6 +1137,8 @@ export function FakeMeetingRoom() {
     rootMargin: "50px",
   });
 
+  const [mobileTab, setMobileTab] = useState<MobileTab>("meeting");
+
   const {
     transcriptionState,
     agendaItems,
@@ -1025,42 +1146,105 @@ export function FakeMeetingRoom() {
     elapsedMinutes,
   } = useMeetingAnimation(isInView);
 
+  // Calculate agenda progress for mobile tab badge
+  const agendaProgress = {
+    completed: agendaItems.filter((i) => i.status === "completed").length,
+    total: agendaItems.length,
+  };
+
+  // Check if there's new transcription activity
+  const hasNewTranscription = transcriptionState.typingIndicator !== null ||
+    transcriptionState.newestIndex >= 0;
+
   return (
     <div ref={containerRef} className="w-full h-full">
       <MacWindowFrame>
-        <div className="relative w-full h-full flex bg-background">
-        {/* Main video area */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Participant grid */}
-          <div className="flex-1 p-2 sm:p-3 md:p-4">
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 h-full">
-              {FAKE_PARTICIPANTS.map((participant) => (
-                <FakeParticipantTile
-                  key={participant.id}
-                  participant={participant}
-                  isSpeaking={participant.id === speakingParticipantId}
-                />
-              ))}
+        <div className="relative w-full h-full flex flex-col md:flex-row bg-background">
+          {/* ============================================================== */}
+          {/* MOBILE LAYOUT (< md breakpoint) */}
+          {/* ============================================================== */}
+
+          {/* Mobile: Main content area that switches based on active tab */}
+          <div className="flex-1 flex flex-col min-h-0 md:hidden">
+            {/* Meeting Tab - Video Grid + Controls */}
+            {mobileTab === "meeting" && (
+              <div className="flex-1 flex flex-col animate-fade-in">
+                {/* Compact participant grid for mobile */}
+                <div className="flex-1 p-2">
+                  <div className="grid grid-cols-2 gap-1.5 h-full">
+                    {FAKE_PARTICIPANTS.map((participant) => (
+                      <FakeParticipantTile
+                        key={participant.id}
+                        participant={participant}
+                        isSpeaking={participant.id === speakingParticipantId}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {/* Control bar */}
+                <FakeControlBar />
+              </div>
+            )}
+
+            {/* Agenda Tab - Full agenda panel */}
+            {mobileTab === "agenda" && (
+              <div className="flex-1 overflow-hidden animate-fade-in">
+                <FakeAgendaPanel agendaItems={agendaItems} elapsedMinutes={elapsedMinutes} isFullScreen />
+              </div>
+            )}
+
+            {/* Transcript Tab - Full transcription panel */}
+            {mobileTab === "transcript" && (
+              <div className="flex-1 overflow-hidden animate-fade-in">
+                <FakeTranscriptionPanel animationState={transcriptionState} isFullScreen />
+              </div>
+            )}
+
+            {/* Mobile Tab Navigation */}
+            <MobileTabBar
+              activeTab={mobileTab}
+              onTabChange={setMobileTab}
+              agendaProgress={agendaProgress}
+              hasNewTranscription={hasNewTranscription}
+            />
+          </div>
+
+          {/* ============================================================== */}
+          {/* DESKTOP LAYOUT (>= md breakpoint) */}
+          {/* ============================================================== */}
+
+          {/* Desktop: Main video area */}
+          <div className="hidden md:flex flex-1 flex-col min-w-0">
+            {/* Participant grid */}
+            <div className="flex-1 p-3 lg:p-4">
+              <div className="grid grid-cols-2 gap-3 lg:gap-4 h-full">
+                {FAKE_PARTICIPANTS.map((participant) => (
+                  <FakeParticipantTile
+                    key={participant.id}
+                    participant={participant}
+                    isSpeaking={participant.id === speakingParticipantId}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Control bar */}
+            <FakeControlBar />
+          </div>
+
+          {/* Desktop: Sidebar - Horizontal split: Agenda (left) | Transcription (right) */}
+          <div className="hidden md:flex h-full w-[380px] lg:w-[440px] xl:w-[520px] border-l border-border bg-background">
+            {/* Agenda Panel - Left side */}
+            <div className="w-[45%] h-full border-r border-border overflow-hidden">
+              <FakeAgendaPanel agendaItems={agendaItems} elapsedMinutes={elapsedMinutes} />
+            </div>
+
+            {/* Transcription Panel - Right side */}
+            <div className="flex-1 h-full overflow-hidden">
+              <FakeTranscriptionPanel animationState={transcriptionState} />
             </div>
           </div>
-
-          {/* Control bar */}
-          <FakeControlBar />
         </div>
-
-        {/* Sidebar - Horizontal split: Agenda (left) | Transcription (right) */}
-        <div className="hidden md:flex h-full w-[420px] lg:w-[480px] xl:w-[560px] border-l border-border bg-background">
-          {/* Agenda Panel - Left side */}
-          <div className="w-[45%] h-full border-r border-border overflow-hidden">
-            <FakeAgendaPanel agendaItems={agendaItems} elapsedMinutes={elapsedMinutes} />
-          </div>
-
-          {/* Transcription Panel - Right side */}
-          <div className="flex-1 h-full overflow-hidden">
-            <FakeTranscriptionPanel animationState={transcriptionState} />
-          </div>
-        </div>
-      </div>
       </MacWindowFrame>
     </div>
   );
