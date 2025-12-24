@@ -399,7 +399,7 @@ function PdfPreviewWindow({
         {/* Status Bar */}
         <div className="flex items-center justify-between px-2 py-1 bg-neutral-800 text-[9px] text-neutral-400">
           <span>{Math.round(reference.confidence * 100)}% match</span>
-          <span className="italic truncate max-w-[150px]">"{reference.matchedText}"</span>
+          <span className="italic truncate max-w-[150px]">&ldquo;{reference.matchedText}&rdquo;</span>
         </div>
       </div>
     </div>
@@ -422,26 +422,26 @@ function FakeTranscriptionMessage({
   return (
     <div
       className={cn(
-        "flex gap-3 transition-all duration-500",
+        "flex gap-2 sm:gap-3 transition-all duration-500",
         isNew ? "animate-fade-in-up" : ""
       )}
     >
-      <Avatar className="size-8 shrink-0">
+      <Avatar className="size-6 sm:size-8 shrink-0">
         <AvatarImage src={entry.avatar} alt={entry.speaker} />
-        <AvatarFallback className="text-xs">{entry.initials}</AvatarFallback>
+        <AvatarFallback className="text-[10px] sm:text-xs">{entry.initials}</AvatarFallback>
       </Avatar>
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 space-y-0.5 sm:space-y-1 min-w-0">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium leading-none">{entry.speaker}</p>
-          <span className="text-xs text-muted-foreground">
+          <p className="text-xs sm:text-sm font-medium leading-none">{entry.speaker}</p>
+          <span className="text-[10px] sm:text-xs text-muted-foreground">
             {entry.timestamp}
           </span>
         </div>
-        <p className="text-sm text-foreground">{entry.text}</p>
+        <p className="text-[11px] sm:text-sm text-foreground leading-relaxed">{entry.text}</p>
 
         {/* Badges */}
         {hasBadges && showInsights && (
-          <div className="flex flex-wrap gap-1.5 mt-2 animate-fade-in">
+          <div className="flex flex-wrap gap-1 sm:gap-1.5 mt-1.5 sm:mt-2 animate-fade-in">
             {entry.documentReference && (
               <FakeDocumentReferenceBadge
                 reference={entry.documentReference}
@@ -498,18 +498,18 @@ function MacWindowFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-full h-full flex flex-col rounded-md overflow-hidden border border-border shadow-2xl bg-background">
       {/* macOS Title Bar */}
-      <div className="flex items-center h-9 px-3 bg-muted/50 border-b border-border shrink-0">
-        <div className="flex items-center gap-1.5">
-          <div className="size-2.5 rounded-full bg-[#ff5f57]" />
-          <div className="size-2.5 rounded-full bg-[#febc2e]" />
-          <div className="size-2.5 rounded-full bg-[#28c840]" />
+      <div className="flex items-center h-7 sm:h-9 px-2 sm:px-3 bg-muted/50 border-b border-border shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#ff5f57]" />
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#febc2e]" />
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#28c840]" />
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <span className="text-xs text-muted-foreground font-medium">
+          <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">
             Live Transcription
           </span>
         </div>
-        <div className="w-12" />
+        <div className="w-8 sm:w-12" />
       </div>
       <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
     </div>
@@ -772,11 +772,11 @@ export function FakeTranscriptionUI() {
       <MacWindowFrame>
       <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="p-3 border-b border-border bg-muted/30">
-          <div className="flex items-center gap-2">
-            <FileText className="size-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Real-time Transcription</span>
-            <span className="ml-auto text-xs text-muted-foreground">
+        <div className="p-2 sm:p-3 border-b border-border bg-muted/30">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <FileText className="size-3 sm:size-4 text-muted-foreground" />
+            <span className="text-[10px] sm:text-sm font-medium">Real-time Transcription</span>
+            <span className="ml-auto text-[9px] sm:text-xs text-muted-foreground hidden xs:block">
               Product Strategy Meeting
             </span>
           </div>
@@ -788,7 +788,7 @@ export function FakeTranscriptionUI() {
           onScroll={handleScroll}
           className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
         >
-          <div className="p-3 space-y-4">
+          <div className="p-2 sm:p-3 space-y-3 sm:space-y-4">
             {visibleTranscriptions.map((entry, index) => (
               <FakeTranscriptionMessage
                 key={entry.id}
@@ -804,24 +804,24 @@ export function FakeTranscriptionUI() {
 
             {/* Typing indicator */}
             {animationState.typingIndicator && (
-              <div className="flex gap-3 opacity-60 animate-fade-in">
-                <Avatar className="size-8 shrink-0">
+              <div className="flex gap-2 sm:gap-3 opacity-60 animate-fade-in">
+                <Avatar className="size-6 sm:size-8 shrink-0">
                   <AvatarImage
                     src={animationState.typingIndicator.avatar}
                     alt={animationState.typingIndicator.speaker}
                   />
-                  <AvatarFallback className="text-xs">
+                  <AvatarFallback className="text-[10px] sm:text-xs">
                     {animationState.typingIndicator.initials}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
+                <div className="flex-1 space-y-0.5 sm:space-y-1 min-w-0">
+                  <p className="text-xs sm:text-sm font-medium leading-none">
                     {animationState.typingIndicator.speaker}
-                    <span className="ml-2 text-xs text-muted-foreground italic">
+                    <span className="ml-1.5 sm:ml-2 text-[10px] sm:text-xs text-muted-foreground italic">
                       speaking...
                     </span>
                   </p>
-                  <p className="text-sm text-foreground italic">
+                  <p className="text-[11px] sm:text-sm text-foreground italic">
                     <TypingText text={animationState.typingIndicator.text} />
                   </p>
                 </div>

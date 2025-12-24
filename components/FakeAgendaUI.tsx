@@ -86,12 +86,12 @@ function AgendaItem({
   const isInProgress = item.status === "in_progress";
 
   return (
-    <div className="flex gap-3 pb-4">
+    <div className="flex gap-2 sm:gap-3 pb-3 sm:pb-4">
       {/* Status indicator + connector */}
-      <div className="relative flex flex-col items-center shrink-0 w-5">
+      <div className="relative flex flex-col items-center shrink-0 w-4 sm:w-5">
         <div
           className={cn(
-            "relative z-10 size-5 rounded-full flex items-center justify-center shrink-0 transition-all duration-500",
+            "relative z-10 size-4 sm:size-5 rounded-full flex items-center justify-center shrink-0 transition-all duration-500",
             item.status === "pending" &&
               "border-2 border-muted-foreground/40 bg-transparent",
             isInProgress &&
@@ -104,7 +104,7 @@ function AgendaItem({
           )}
           {isCompleted && (
             <Check
-              className="size-3 text-white animate-scale-in"
+              className="size-2.5 sm:size-3 text-white animate-scale-in"
               strokeWidth={3}
             />
           )}
@@ -125,14 +125,14 @@ function AgendaItem({
       <div
         className={cn(
           "flex-1 min-w-0 rounded-md transition-all duration-300",
-          isCurrent && "bg-primary/5 px-3 py-1 -my-1"
+          isCurrent && "bg-primary/5 px-2 sm:px-3 py-0.5 sm:py-1 -my-0.5 sm:-my-1"
         )}
       >
-        <div className="space-y-1">
-          <div className="flex items-start gap-2">
+        <div className="space-y-0.5 sm:space-y-1">
+          <div className="flex items-start gap-1.5 sm:gap-2">
             <span
               className={cn(
-                "text-sm font-medium leading-tight transition-all duration-300",
+                "text-[11px] sm:text-sm font-medium leading-tight transition-all duration-300",
                 isCompleted && "text-muted-foreground line-through",
                 isCurrent && "text-primary font-semibold",
                 !isCompleted && !isCurrent && "text-foreground"
@@ -141,24 +141,24 @@ function AgendaItem({
               {item.title}
             </span>
             {isCurrent && (
-              <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 px-1.5 py-0.5 rounded animate-pulse">
+              <span className="shrink-0 text-[8px] sm:text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 px-1 sm:px-1.5 py-0.5 rounded animate-pulse">
                 Now
               </span>
             )}
             {isCompleted && (
-              <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400 px-1.5 py-0.5 rounded animate-fade-in">
+              <span className="shrink-0 text-[8px] sm:text-[10px] font-medium uppercase tracking-wide text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400 px-1 sm:px-1.5 py-0.5 rounded animate-fade-in">
                 Done
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Clock className="size-3" />
+          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground">
+            <span className="flex items-center gap-0.5 sm:gap-1">
+              <Clock className="size-2.5 sm:size-3" />
               {item.duration}
             </span>
-            <span className="flex items-center gap-1">
-              <User className="size-3" />
+            <span className="flex items-center gap-0.5 sm:gap-1">
+              <User className="size-2.5 sm:size-3" />
               {item.presenter}
             </span>
           </div>
@@ -176,18 +176,18 @@ function MacWindowFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-full h-full flex flex-col rounded-md overflow-hidden border border-border shadow-2xl bg-background">
       {/* macOS Title Bar */}
-      <div className="flex items-center h-9 px-3 bg-muted/50 border-b border-border shrink-0">
-        <div className="flex items-center gap-1.5">
-          <div className="size-2.5 rounded-full bg-[#ff5f57]" />
-          <div className="size-2.5 rounded-full bg-[#febc2e]" />
-          <div className="size-2.5 rounded-full bg-[#28c840]" />
+      <div className="flex items-center h-7 sm:h-9 px-2 sm:px-3 bg-muted/50 border-b border-border shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#ff5f57]" />
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#febc2e]" />
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#28c840]" />
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <span className="text-xs text-muted-foreground font-medium">
+          <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">
             Agenda Progress
           </span>
         </div>
-        <div className="w-12" />
+        <div className="w-8 sm:w-12" />
       </div>
       <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
     </div>
@@ -202,12 +202,12 @@ function AIContextBadge({ text, isVisible }: { text: string; isVisible: boolean 
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 border border-primary/20 transition-all duration-500",
+        "flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md bg-primary/10 border border-primary/20 transition-all duration-500",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
       )}
     >
-      <Sparkles className="size-3 text-primary" />
-      <span className="text-xs text-primary font-medium">{text}</span>
+      <Sparkles className="size-2.5 sm:size-3 text-primary" />
+      <span className="text-[10px] sm:text-xs text-primary font-medium truncate max-w-[100px] sm:max-w-none">{text}</span>
     </div>
   );
 }
@@ -352,23 +352,23 @@ export function FakeAgendaUI() {
       <MacWindowFrame>
         <div className="flex flex-col h-full">
           {/* Header with progress */}
-          <div className="p-3 border-b space-y-3">
+          <div className="p-2 sm:p-3 border-b space-y-2 sm:space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ListTodo className="size-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Agenda Progress</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <ListTodo className="size-3 sm:size-4 text-muted-foreground" />
+                <span className="text-xs sm:text-sm font-medium">Agenda Progress</span>
               </div>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-xs sm:text-sm text-muted-foreground">
                 {completedItems}/{agendaItems.length}
               </span>
             </div>
             <Progress
               value={progressPercentage}
-              className="h-2 transition-all duration-500"
+              className="h-1.5 sm:h-2 transition-all duration-500"
             />
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock className="size-3" />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs text-muted-foreground">
+                <Clock className="size-2.5 sm:size-3" />
                 <span>Est. remaining: {remainingMinutes} min</span>
               </div>
               {/* AI Context Badge */}
@@ -380,7 +380,7 @@ export function FakeAgendaUI() {
 
           {/* Scrollable items list */}
           <ScrollArea className="flex-1">
-            <div className="p-3 space-y-0">
+            <div className="p-2 sm:p-3 space-y-0">
               {agendaItems.map((item, index) => (
                 <AgendaItem
                   key={item.id}
@@ -390,7 +390,7 @@ export function FakeAgendaUI() {
                 />
               ))}
             </div>
-            <ScrollBar className="w-2 bg-muted/50" />
+            <ScrollBar className="w-1.5 sm:w-2 bg-muted/50" />
           </ScrollArea>
         </div>
       </MacWindowFrame>

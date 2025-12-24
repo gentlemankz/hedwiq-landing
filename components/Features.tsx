@@ -6,7 +6,6 @@ import { FakeTranscriptionUI } from "@/components/FakeTranscriptionUI";
 import { FakeNoteTakerUI, type NoteTakerMode } from "@/components/FakeNoteTakerUI";
 import { FakeEmailDraftUI } from "@/components/FakeEmailDraftUI";
 import { FakeAgendaUI } from "@/components/FakeAgendaUI";
-import { Badge } from "@/components/ui/badge";
 import { Sparkles, CheckCircle2, ListTodo, Bot } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { cn } from "@/lib/utils";
@@ -51,20 +50,20 @@ function SubfeatureList({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-0.5 sm:gap-1">
       {subfeatures.map((subfeature, index) => (
         <button
           key={subfeature.id}
           onClick={() => onSelect(index)}
           className={cn(
-            "text-left px-3 py-2 rounded-md transition-all duration-300",
+            "text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-md transition-all duration-300",
             "border-l-2",
             index === activeIndex
               ? "border-l-primary bg-primary/5 text-foreground"
               : "border-l-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30"
           )}
         >
-          <span className="text-sm md:text-base font-medium">
+          <span className="text-xs sm:text-sm md:text-base font-medium">
             {subfeature.title}
           </span>
         </button>
@@ -88,37 +87,11 @@ function NoteTakerFeatureSection() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-20 md:mt-28">
-      {/* Left Side - Note Taker UI overlaid on image */}
-      <AnimatedSection delay={300} animation="slide-right">
-        <div className="relative order-2 lg:order-1">
-          {/* Decorative blur elements */}
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Main container with background image */}
-          <div className="relative w-full aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
-            {/* Background Image */}
-            <Image
-              src="/art2.jpg"
-              alt="Team taking notes"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-
-            {/* Note Taker UI overlaid on image */}
-            <div className="absolute inset-4 sm:inset-6 md:inset-8">
-              <FakeNoteTakerUI mode={activeSubfeature.mode} />
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Right Side - Description with Subfeature Switcher */}
-      <AnimatedSection delay={400} animation="slide-left">
-        <div className="flex flex-col gap-6 lg:pl-4 order-1 lg:order-2">
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-12 md:mt-20 lg:mt-28">
+      {/* Text Description - First on mobile/tablet */}
+      <AnimatedSection delay={300} animation="slide-right" className="order-1 lg:order-2">
+        <div className="flex flex-col gap-4 sm:gap-6 lg:pl-4">
+          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
             Advanced Note Taker with
             <br />
             <span className="text-primary">Quote Transcription</span>
@@ -134,10 +107,36 @@ function NoteTakerFeatureSection() {
           {/* Active subfeature description */}
           <p
             key={activeSubfeature.id}
-            className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md animate-fade-in"
+            className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md animate-fade-in"
           >
             {activeSubfeature.description}
           </p>
+        </div>
+      </AnimatedSection>
+
+      {/* UI Component - Second on mobile/tablet */}
+      <AnimatedSection delay={400} animation="slide-left" className="order-2 lg:order-1">
+        <div className="relative">
+          {/* Decorative blur elements - hidden on mobile for performance */}
+          <div className="hidden sm:block absolute -top-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="hidden sm:block absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Main container with background image */}
+          <div className="relative w-full aspect-[4/5] sm:aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
+            {/* Background Image */}
+            <Image
+              src="/art2.jpg"
+              alt="Team taking notes"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+
+            {/* Note Taker UI overlaid on image */}
+            <div className="absolute inset-3 sm:inset-4 md:inset-6 lg:inset-8">
+              <FakeNoteTakerUI mode={activeSubfeature.mode} />
+            </div>
+          </div>
         </div>
       </AnimatedSection>
     </div>
@@ -150,16 +149,16 @@ function NoteTakerFeatureSection() {
 
 function EmailDraftFeatureSection() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-20 md:mt-28">
-      {/* Left Side - Description */}
-      <AnimatedSection delay={300} animation="slide-right">
-        <div className="flex flex-col gap-6 lg:pr-4">
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+    <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-12 md:mt-20 lg:mt-28">
+      {/* Text Description - Always first on mobile/tablet */}
+      <AnimatedSection delay={300} animation="slide-right" className="order-1">
+        <div className="flex flex-col gap-4 sm:gap-6 lg:pr-4">
+          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
             Real-Time Actions to
             <br />
             <span className="text-primary">Follow-Up Emails</span>
           </h3>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
             Hedwiq detects action items during your meeting and instantly generates professional email drafts. Review, edit, and send in one click.
           </p>
 
@@ -167,47 +166,47 @@ function EmailDraftFeatureSection() {
           <div className="w-full max-w-md h-px bg-border" />
 
           {/* Feature highlights */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
             {/* AI-Powered Drafts */}
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
-                <Sparkles className="size-5 text-violet-500" />
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <Sparkles className="size-4 sm:size-5 text-violet-500" />
               </div>
               <div>
-                <p className="text-sm font-medium">AI-Powered Drafts</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs sm:text-sm font-medium">AI-Powered Drafts</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
                   Context-aware emails from meeting discussions
                 </p>
               </div>
             </div>
 
             {/* Gmail Integration */}
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
                 <Image
                   src="/Gmail_icon_(2020).svg"
                   alt="Gmail"
                   width={24}
                   height={24}
-                  className="size-6"
+                  className="size-5 sm:size-6"
                 />
               </div>
               <div>
-                <p className="text-sm font-medium">Gmail Integration</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs sm:text-sm font-medium">Gmail Integration</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
                   Send directly from your connected account
                 </p>
               </div>
             </div>
 
             {/* Review Before Sending */}
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
-                <CheckCircle2 className="size-5 text-emerald-500" />
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <CheckCircle2 className="size-4 sm:size-5 text-emerald-500" />
               </div>
               <div>
-                <p className="text-sm font-medium">Review Before Sending</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs sm:text-sm font-medium">Review Before Sending</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
                   Edit subject, body, and recipients
                 </p>
               </div>
@@ -216,15 +215,15 @@ function EmailDraftFeatureSection() {
         </div>
       </AnimatedSection>
 
-      {/* Right Side - Email Draft UI overlaid on image */}
-      <AnimatedSection delay={400} animation="slide-left">
+      {/* UI Component - Second on mobile/tablet */}
+      <AnimatedSection delay={400} animation="slide-left" className="order-2">
         <div className="relative">
-          {/* Decorative blur elements */}
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+          {/* Decorative blur elements - hidden on mobile for performance */}
+          <div className="hidden sm:block absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="hidden sm:block absolute -bottom-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
           {/* Main container with background image */}
-          <div className="relative w-full aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
+          <div className="relative w-full aspect-[4/5] sm:aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
             {/* Background Image */}
             <Image
               src="/art3.jpg"
@@ -235,7 +234,7 @@ function EmailDraftFeatureSection() {
             />
 
             {/* Email Draft UI overlaid on image */}
-            <div className="absolute inset-4 sm:inset-6 md:inset-8">
+            <div className="absolute inset-3 sm:inset-4 md:inset-6 lg:inset-8">
               <FakeEmailDraftUI />
             </div>
           </div>
@@ -251,16 +250,81 @@ function EmailDraftFeatureSection() {
 
 function AgendaFeatureSection() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-20 md:mt-28">
-      {/* Left Side - Agenda UI overlaid on image */}
-      <AnimatedSection delay={300} animation="slide-right">
-        <div className="relative order-2 lg:order-1">
-          {/* Decorative blur elements */}
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-12 md:mt-20 lg:mt-28">
+      {/* Text Description - First on mobile/tablet */}
+      <AnimatedSection delay={300} animation="slide-right" className="order-1 lg:order-2">
+        <div className="flex flex-col gap-4 sm:gap-6 lg:pl-4">
+          {/* Quote */}
+          <blockquote className="text-base sm:text-lg md:text-xl font-medium text-muted-foreground italic border-l-4 border-primary pl-3 sm:pl-4">
+            &ldquo;No agenda, no meeting&rdquo;
+          </blockquote>
+
+          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
+            Smart Agenda that
+            <br />
+            <span className="text-primary">Runs Itself</span>
+          </h3>
+
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
+            Build your agenda before the meeting. Our AI listens to the conversation and automatically transitions between topics.
+          </p>
+
+          {/* Divider */}
+          <div className="w-full max-w-md h-px bg-border" />
+
+          {/* Feature highlights */}
+          <div className="flex flex-col gap-3 sm:gap-4">
+            {/* Agenda Builder */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <ListTodo className="size-4 sm:size-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-medium">Drag & Drop Builder</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  Create structured agendas with time estimates
+                </p>
+              </div>
+            </div>
+
+            {/* AI Context Understanding */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <Bot className="size-4 sm:size-5 text-violet-500" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-medium">AI Context Awareness</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  Detects topic shifts and advances automatically
+                </p>
+              </div>
+            </div>
+
+            {/* Progress Tracking */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <CheckCircle2 className="size-4 sm:size-5 text-emerald-500" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-medium">Real-Time Progress</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  Track completion and time remaining at a glance
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* UI Component - Second on mobile/tablet */}
+      <AnimatedSection delay={400} animation="slide-left" className="order-2 lg:order-1">
+        <div className="relative">
+          {/* Decorative blur elements - hidden on mobile for performance */}
+          <div className="hidden sm:block absolute -top-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="hidden sm:block absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
           {/* Main container with background image */}
-          <div className="relative w-full aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
+          <div className="relative w-full aspect-[4/5] sm:aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
             {/* Background Image */}
             <Image
               src="/art4.jpg"
@@ -271,73 +335,8 @@ function AgendaFeatureSection() {
             />
 
             {/* Agenda UI overlaid on image */}
-            <div className="absolute inset-4 sm:inset-6 md:inset-8">
+            <div className="absolute inset-3 sm:inset-4 md:inset-6 lg:inset-8">
               <FakeAgendaUI />
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Right Side - Description */}
-      <AnimatedSection delay={400} animation="slide-left">
-        <div className="flex flex-col gap-6 lg:pl-4 order-1 lg:order-2">
-          {/* Quote */}
-          <blockquote className="text-lg md:text-xl font-medium text-muted-foreground italic border-l-4 border-primary pl-4">
-            &ldquo;No agenda, no meeting&rdquo;
-          </blockquote>
-
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
-            Smart Agenda that
-            <br />
-            <span className="text-primary">Runs Itself</span>
-          </h3>
-
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
-            Build your agenda before the meeting. Our AI listens to the conversation and automatically transitions between topics.
-          </p>
-
-          {/* Divider */}
-          <div className="w-full max-w-md h-px bg-border" />
-
-          {/* Feature highlights */}
-          <div className="flex flex-col gap-4">
-            {/* Agenda Builder */}
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
-                <ListTodo className="size-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Drag & Drop Builder</p>
-                <p className="text-xs text-muted-foreground">
-                  Create structured agendas with time estimates
-                </p>
-              </div>
-            </div>
-
-            {/* AI Context Understanding */}
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
-                <Bot className="size-5 text-violet-500" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">AI Context Awareness</p>
-                <p className="text-xs text-muted-foreground">
-                  Detects topic shifts and advances automatically
-                </p>
-              </div>
-            </div>
-
-            {/* Progress Tracking */}
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
-                <CheckCircle2 className="size-5 text-emerald-500" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Real-Time Progress</p>
-                <p className="text-xs text-muted-foreground">
-                  Track completion and time remaining at a glance
-                </p>
-              </div>
             </div>
           </div>
         </div>
@@ -352,81 +351,64 @@ function AgendaFeatureSection() {
 
 export function Features() {
   return (
-    <section id="features" className="w-full px-6 md:px-12 lg:px-24 py-16 md:py-24 scroll-mt-20">
+    <section id="features" className="w-full px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-20 lg:py-24 scroll-mt-20">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="flex flex-col items-center text-center gap-4 mb-12 md:mb-16">
-          <AnimatedSection delay={0}>
-            <Badge variant="secondary" className="w-fit gap-2 py-1 px-3">
-              <Sparkles className="size-4" />
-              Features
-            </Badge>
-          </AnimatedSection>
-          <AnimatedSection delay={100}>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight tracking-tight">
-              Turn conversations into action
-            </h2>
-          </AnimatedSection>
-          <AnimatedSection delay={200}>
-            <p className="text-lg text-muted-foreground max-w-2xl">
-              Hedwiq listens, understands, and surfaces what matters most in real-time
-            </p>
-          </AnimatedSection>
-        </div>
-
         {/* Feature 1: Live Transcription */}
-        <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
-          {/* Left Side - Description */}
-          <AnimatedSection delay={300} animation="slide-right">
-            <div className="flex flex-col gap-6 lg:pr-4">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+        <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
+          {/* Text Description - First on mobile/tablet (already in correct DOM order) */}
+          <AnimatedSection delay={0} animation="slide-right" className="order-1">
+            <div className="flex flex-col gap-4 sm:gap-6 lg:pr-4">
+              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
                 Live Transcription with
                 <br />
                 <span className="text-primary">Intelligent Insights</span>
               </h3>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
                 Hedwiq captures every word and automatically tags problems, ideas, decisions, and action items in real-time.
               </p>
 
               {/* Divider */}
               <div className="w-full max-w-md h-px bg-border" />
 
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
                 Transcriptions reference your documents directly, highlighting the exact information connected to each part of the conversation.
               </p>
               {/* Supported document types */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <Image
                   src="/PDF_file_icon.svg"
                   alt="PDF"
                   width={36}
                   height={37}
+                  className="w-7 h-auto sm:w-9"
                 />
                 <Image
                   src="/Google_Google_Sheets_0.svg"
                   alt="Google Sheets"
                   width={32}
                   height={32}
+                  className="w-6 h-auto sm:w-8"
                 />
                 <Image
                   src="/Google_Google_Docs_0.svg"
                   alt="Google Docs"
                   width={32}
                   height={32}
+                  className="w-6 h-auto sm:w-8"
                 />
               </div>
             </div>
           </AnimatedSection>
 
-          {/* Right Side - Transcription UI overlaid on image */}
-          <AnimatedSection delay={400} animation="slide-left">
+          {/* UI Component - Second on mobile/tablet */}
+          <AnimatedSection delay={100} animation="slide-left" className="order-2">
             <div className="relative">
-              {/* Decorative blur elements */}
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+              {/* Decorative blur elements - hidden on mobile for performance */}
+              <div className="hidden sm:block absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+              <div className="hidden sm:block absolute -bottom-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
               {/* Main container with background image */}
-              <div className="relative w-full aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
+              <div className="relative w-full aspect-[4/5] sm:aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
                 {/* Background Image */}
                 <Image
                   src="/art1.jpg"
@@ -437,7 +419,7 @@ export function Features() {
                 />
 
                 {/* Transcription UI overlaid on image */}
-                <div className="absolute inset-4 sm:inset-6 md:inset-8">
+                <div className="absolute inset-3 sm:inset-4 md:inset-6 lg:inset-8">
                   <FakeTranscriptionUI />
                 </div>
               </div>

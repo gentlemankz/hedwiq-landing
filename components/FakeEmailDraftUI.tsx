@@ -177,18 +177,18 @@ function MacWindowFrame({
   return (
     <div className="relative w-full h-full flex flex-col rounded-md overflow-hidden border border-border shadow-2xl bg-background">
       {/* macOS Title Bar */}
-      <div className="flex items-center h-9 px-3 bg-muted/50 border-b border-border shrink-0">
-        <div className="flex items-center gap-1.5">
-          <div className="size-2.5 rounded-full bg-[#ff5f57]" />
-          <div className="size-2.5 rounded-full bg-[#febc2e]" />
-          <div className="size-2.5 rounded-full bg-[#28c840]" />
+      <div className="flex items-center h-7 sm:h-9 px-2 sm:px-3 bg-muted/50 border-b border-border shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#ff5f57]" />
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#febc2e]" />
+          <div className="size-2 sm:size-2.5 rounded-full bg-[#28c840]" />
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <span className="text-xs text-muted-foreground font-medium">
+          <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">
             {title}
           </span>
         </div>
-        <div className="w-12" />
+        <div className="w-8 sm:w-12" />
       </div>
       <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
     </div>
@@ -208,32 +208,32 @@ function ActionDetectionIndicator({
   return (
     <div
       className={cn(
-        "flex items-start gap-3 p-3 rounded-lg border transition-all duration-500",
+        "flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border transition-all duration-500",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
         isProcessing
           ? "border-primary/50 bg-primary/5"
           : "border-border bg-muted/30"
       )}
     >
-      <Avatar className="size-8 shrink-0">
+      <Avatar className="size-6 sm:size-8 shrink-0">
         <AvatarImage src={action.avatar} alt={action.speaker} />
-        <AvatarFallback className="text-xs">{action.initials}</AvatarFallback>
+        <AvatarFallback className="text-[10px] sm:text-xs">{action.initials}</AvatarFallback>
       </Avatar>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-medium">{action.speaker}</span>
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1 flex-wrap">
+          <span className="text-xs sm:text-sm font-medium">{action.speaker}</span>
           <Badge
             variant="secondary"
             className={cn(
-              "text-xs transition-all",
+              "text-[10px] sm:text-xs transition-all px-1.5 sm:px-2",
               isProcessing && "animate-pulse"
             )}
           >
-            <Sparkles className="size-3 mr-1" />
+            <Sparkles className="size-2.5 sm:size-3 mr-0.5 sm:mr-1" />
             Action Detected
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground line-clamp-2">
+        <p className="text-[11px] sm:text-sm text-muted-foreground line-clamp-2">
           &ldquo;{action.content}&rdquo;
         </p>
       </div>
