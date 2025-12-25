@@ -110,18 +110,18 @@ export function Header() {
             <Link
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-              aria-label="Hedwiq - Go to homepage"
+              aria-label="Luframe - Go to homepage"
             >
               <Image
-                src="/logo-main.svg"
+                src="/luframe-logo.svg"
                 alt=""
-                width={40}
-                height={40}
+                width={30}
+                height={30}
                 priority
                 aria-hidden="true"
               />
-              <span className="text-md font-semibold text-foreground -mb-[5px]">
-                Hedwiq
+              <span className="text-md font-semibold text-foreground">
+                Luframe
               </span>
             </Link>
 

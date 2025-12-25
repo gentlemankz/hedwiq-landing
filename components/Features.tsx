@@ -159,7 +159,7 @@ function EmailDraftFeatureSection() {
             <span className="text-primary">Follow-Up Emails</span>
           </h3>
           <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
-            Hedwiq detects action items during your meeting and instantly generates professional email drafts. Review, edit, and send in one click.
+            Luframe detects action items during your meeting and instantly generates professional email drafts. Review, edit, and send in one click.
           </p>
 
           {/* Divider */}
@@ -364,7 +364,7 @@ export function Features() {
                 <span className="text-primary">Intelligent Insights</span>
               </h3>
               <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
-                Hedwiq captures every word and automatically tags problems, ideas, decisions, and action items in real-time.
+                Luframe captures every word and automatically tags problems, ideas, decisions, and action items in real-time.
               </p>
 
               {/* Divider */}

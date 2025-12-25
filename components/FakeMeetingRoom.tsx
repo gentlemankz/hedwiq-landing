@@ -859,7 +859,7 @@ function MacWindowFrame({ children }: { children: React.ReactNode }) {
         {/* Window Title */}
         <div className="flex-1 flex items-center justify-center">
           <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">
-            Hedwiq — Quarterly Digital Marketing Strategy
+            Luframe — Quarterly Digital Marketing Strategy
           </span>
         </div>
 

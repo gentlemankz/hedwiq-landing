@@ -11,7 +11,7 @@ const footerLinks = {
   company: [
     { label: "About", href: "/about" },
     { label: "Blog", href: "/blog" },
-    { label: "Contact", href: "mailto:support@hedwiq.app" },
+    { label: "Contact", href: "mailto:support@luframe.com" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
@@ -31,23 +31,23 @@ export function Footer() {
             <div className="col-span-2 md:col-span-1">
               <Link href="/" className="flex items-center gap-2 mb-4">
                 <Image
-                  src="/logo-main.svg"
-                  alt="Hedwiq Logo"
-                  width={32}
-                  height={32}
+                  src="/luframe-logo.svg"
+                  alt="Luframe Logo"
+                  width={30}
+                  height={30}
                 />
                 <span className="text-md font-semibold text-foreground">
-                  Hedwiq
+                  Luframe
                 </span>
               </Link>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 Transform your meetings into real-time action.
               </p>
               <a
-                href="mailto:support@hedwiq.app"
+                href="mailto:support@luframe.com"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                support@hedwiq.app
+                support@luframe.com
               </a>
             </div>
 
@@ -118,7 +118,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-4">
               <Link
-                href="https://twitter.com/hedwiqapp"
+                href="https://twitter.com/luframeapp"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Twitter"
@@ -134,7 +134,7 @@ export function Footer() {
                 </svg>
               </Link>
               <Link
-                href="https://linkedin.com/company/hedwiq"
+                href="https://linkedin.com/company/luframe"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"

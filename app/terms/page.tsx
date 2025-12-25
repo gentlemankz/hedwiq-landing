@@ -4,9 +4,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Hedwiq",
+  title: "Terms of Service | Luframe",
   description:
-    "Read the terms and conditions for using Hedwiq's meeting platform and services.",
+    "Read the terms and conditions for using Luframe's meeting platform and services.",
 };
 
 export default function TermsPage() {
@@ -23,7 +23,7 @@ export default function TermsPage() {
               Terms of Service
             </h1>
             <p className="text-lg text-muted-foreground">
-              Please read these terms carefully before using Hedwiq.
+              Please read these terms carefully before using Luframe.
             </p>
           </div>
 
@@ -136,9 +136,9 @@ export default function TermsPage() {
                 These Terms of Service (&quot;Terms&quot;) constitute a legally
                 binding agreement between you, whether personally or on behalf
                 of an entity (&quot;you&quot; or &quot;User&quot;), and Selectra
-                Group, Inc. (&quot;Hedwiq,&quot; &quot;we,&quot; &quot;us,&quot;
+                Group, Inc. (&quot;Luframe,&quot; &quot;we,&quot; &quot;us,&quot;
                 or &quot;our&quot;), concerning your access to and use of the
-                Hedwiq website (hedwiq.app) and all related services
+                Luframe website (luframe.com) and all related services
                 (collectively, the &quot;Services&quot;).
               </p>
               <p className="mb-4">
@@ -165,7 +165,7 @@ export default function TermsPage() {
                 2. Description of Services
               </h2>
               <p className="mb-4">
-                Hedwiq is an AI-native meeting platform that provides:
+                Luframe is an AI-native meeting platform that provides:
               </p>
               <ul className="list-disc list-inside mb-4 space-y-1">
                 <li>Real-time video and audio meeting capabilities</li>
@@ -246,7 +246,7 @@ export default function TermsPage() {
                   Services
                 </li>
                 <li>
-                  Not use the Services for any activity that could harm Hedwiq
+                  Not use the Services for any activity that could harm Luframe
                   or its users
                 </li>
               </ul>
@@ -284,7 +284,7 @@ export default function TermsPage() {
                   wiretapping laws
                 </li>
                 <li>
-                  <strong>You authorize Hedwiq</strong> and our third-party
+                  <strong>You authorize Luframe</strong> and our third-party
                   service providers to process audio, video, transcripts, and
                   summaries to provide and improve the Services
                 </li>
@@ -297,7 +297,7 @@ export default function TermsPage() {
               <p className="mb-4">
                 Some jurisdictions require all-party consent for recording. It
                 is your responsibility to understand and comply with these
-                requirements. Hedwiq is not liable for your failure to obtain
+                requirements. Luframe is not liable for your failure to obtain
                 proper consent.
               </p>
             </section>
@@ -354,7 +354,7 @@ export default function TermsPage() {
                   Services
                 </li>
                 <li>
-                  Use the Services to compete with Hedwiq or create derivative
+                  Use the Services to compete with Luframe or create derivative
                   products
                 </li>
               </ul>
@@ -376,7 +376,7 @@ export default function TermsPage() {
               </p>
               <p className="mb-4">
                 You retain ownership of your User Content. However, by using the
-                Services, you grant Hedwiq a worldwide, non-exclusive,
+                Services, you grant Luframe a worldwide, non-exclusive,
                 royalty-free license to use, process, store, and display your
                 User Content solely for the purpose of providing and improving
                 the Services.
@@ -408,7 +408,7 @@ export default function TermsPage() {
               <p className="mb-4">
                 The Services, including all content, features, functionality,
                 software, text, graphics, logos, and trademarks, are owned by
-                Hedwiq or its licensors and are protected by copyright,
+                Luframe or its licensors and are protected by copyright,
                 trademark, and other intellectual property laws.
               </p>
               <p className="mb-4">
@@ -423,7 +423,7 @@ export default function TermsPage() {
                   permission
                 </li>
                 <li>
-                  Use Hedwiq&apos;s trademarks without prior written consent
+                  Use Luframe&apos;s trademarks without prior written consent
                 </li>
                 <li>
                   Remove any copyright or proprietary notices from the Services
@@ -482,10 +482,10 @@ export default function TermsPage() {
                 You may cancel your subscription at any time through your
                 account settings or by contacting us at{" "}
                 <a
-                  href="mailto:support@hedwiq.app"
+                  href="mailto:support@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@hedwiq.app
+                  support@luframe.com
                 </a>
                 .
               </p>
@@ -577,7 +577,7 @@ export default function TermsPage() {
               </h2>
               <div className="bg-muted/50 rounded-lg p-6 mb-4 text-sm">
                 <p className="mb-4">
-                  TO THE MAXIMUM EXTENT PERMITTED BY LAW, HEDWIQ AND ITS
+                  TO THE MAXIMUM EXTENT PERMITTED BY LAW, LUFRAME AND ITS
                   OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE
                   FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR
                   PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF
@@ -605,7 +605,7 @@ export default function TermsPage() {
                 14. Indemnification
               </h2>
               <p className="mb-4">
-                You agree to indemnify, defend, and hold harmless Hedwiq and its
+                You agree to indemnify, defend, and hold harmless Luframe and its
                 officers, directors, employees, agents, and affiliates from and
                 against any claims, damages, losses, liabilities, costs, and
                 expenses (including reasonable attorneys&apos; fees) arising out
@@ -649,10 +649,10 @@ export default function TermsPage() {
               <p>
                 You may terminate your account at any time by contacting us at{" "}
                 <a
-                  href="mailto:support@hedwiq.app"
+                  href="mailto:support@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@hedwiq.app
+                  support@luframe.com
                 </a>
                 .
               </p>
@@ -724,10 +724,10 @@ export default function TermsPage() {
                 <p>
                   Email:{" "}
                   <a
-                    href="mailto:support@hedwiq.app"
+                    href="mailto:support@luframe.com"
                     className="text-primary hover:underline"
                   >
-                    support@hedwiq.app
+                    support@luframe.com
                   </a>
                 </p>
               </div>

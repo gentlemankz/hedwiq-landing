@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hedwiq | Agentic Meeting Platform for Real-Time Execution",
+  title: "Luframe | Agentic Meeting Platform for Real-Time Execution",
   description: "Turns live meetings into real-time action with speaker-aware transcription, automatic insight detection, agenda tracking, and instant drafts linked to meeting context",
 };
 

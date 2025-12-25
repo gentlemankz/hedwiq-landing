@@ -22,7 +22,7 @@ interface FAQItem {
 const FAQ_ITEMS: FAQItem[] = [
   {
     id: "security",
-    question: "How secure is my data with Hedwiq?",
+    question: "How secure is my data with Luframe?",
     answer:
       "Your data is fully encrypted both in transit and at rest, ensuring no unauthorized entity can access it. You maintain complete control and can delete your data at any time. Additionally, your meeting data is never used for training AI models - your conversations remain private and confidential.",
   },
@@ -30,19 +30,19 @@ const FAQ_ITEMS: FAQItem[] = [
     id: "why-switch",
     question: "Why should I switch from Zoom, Google Meet, Otter, or Notion?",
     answer:
-      "Unlike traditional tools that work in isolation, Hedwiq combines real-time transcription, AI-powered insights, automatic action items, and meeting notes into one seamless platform. Instead of juggling between Zoom for calls, Otter for transcription, and Notion for notes, Hedwiq delivers everything in real-time during your meeting - turning discussions into immediate action, not post-meeting work.",
+      "Unlike traditional tools that work in isolation, Luframe combines real-time transcription, AI-powered insights, automatic action items, and meeting notes into one seamless platform. Instead of juggling between Zoom for calls, Otter for transcription, and Notion for notes, Luframe delivers everything in real-time during your meeting - turning discussions into immediate action, not post-meeting work.",
   },
   {
     id: "difficulty",
     question: "How difficult is it to use the platform?",
     answer:
-      "Hedwiq is designed to be incredibly intuitive. Our short demo video covers everything you need to know to get started. Most users are productive within minutes of their first meeting.",
+      "Luframe is designed to be incredibly intuitive. Our short demo video covers everything you need to know to get started. Most users are productive within minutes of their first meeting.",
   },
   {
     id: "teams",
     question: "Do you support team-based solutions?",
     answer:
-      "Yes! Hedwiq offers comprehensive team workspace features. You can create teams, easily invite members with role-based permissions, share meeting access, and collaborate on notes and action items. Teams can organize meetings into folders and maintain shared context across all their collaborative sessions.",
+      "Yes! Luframe offers comprehensive team workspace features. You can create teams, easily invite members with role-based permissions, share meeting access, and collaborate on notes and action items. Teams can organize meetings into folders and maintain shared context across all their collaborative sessions.",
   },
 ];
 
@@ -68,7 +68,7 @@ export function FAQ() {
           </AnimatedSection>
           <AnimatedSection delay={200}>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Everything you need to know about Hedwiq
+              Everything you need to know about Luframe
             </p>
           </AnimatedSection>
         </div>

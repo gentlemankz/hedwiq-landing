@@ -5,9 +5,9 @@ import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Pricing | Hedwiq - Agentic Meeting Platform",
+  title: "Pricing | Luframe - Agentic Meeting Platform",
   description:
-    "Simple, transparent pricing for Hedwiq. Start free, upgrade when you need more. No hidden fees, no surprises.",
+    "Simple, transparent pricing for Luframe. Start free, upgrade when you need more. No hidden fees, no surprises.",
 };
 
 export default function PricingPage() {

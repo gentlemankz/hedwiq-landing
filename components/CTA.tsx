@@ -14,7 +14,7 @@ export function CTA() {
             {/* Background Image */}
             <Image
               src="/cta.png"
-              alt="Get started with Hedwiq"
+              alt="Get started with Luframe"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 1200px"

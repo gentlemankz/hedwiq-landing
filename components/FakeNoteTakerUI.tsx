@@ -248,7 +248,7 @@ export function FakeNoteTakerUI({ mode = "notes-only" }: FakeNoteTakerUIProps) {
 
   return (
     <div className="relative w-full h-full">
-      <MacWindowFrame title="Hedwiq — Marketing Strategy Meeting">
+      <MacWindowFrame title="Luframe — Marketing Strategy Meeting">
         <div className="flex flex-col h-full bg-background">
           {/* Main content area - participants + controls (constrained height) */}
           <div className="flex flex-col shrink-0 h-[40%]">

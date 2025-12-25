@@ -4,9 +4,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Hedwiq",
+  title: "Privacy Policy | Luframe",
   description:
-    "Learn how Hedwiq collects, uses, and protects your personal information.",
+    "Learn how Luframe collects, uses, and protects your personal information.",
 };
 
 export default function PrivacyPage() {
@@ -120,15 +120,15 @@ export default function PrivacyPage() {
             <section id="introduction" className="mb-12">
               <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
               <p className="mb-4">
-                Selectra Group, Inc. (&quot;Hedwiq,&quot; &quot;we,&quot;
-                &quot;us,&quot; or &quot;our&quot;) operates the Hedwiq platform,
+                Selectra Group, Inc. (&quot;Luframe,&quot; &quot;we,&quot;
+                &quot;us,&quot; or &quot;our&quot;) operates the Luframe platform,
                 an AI-native meeting and collaboration solution. We are
                 committed to protecting your privacy and providing transparency
                 about how we collect, use, and safeguard your personal
                 information.
               </p>
               <p className="mb-4">
-                This Privacy Policy applies to our website at hedwiq.app and all
+                This Privacy Policy applies to our website at luframe.com and all
                 related services, including our meeting platform, transcription
                 services, and integrations (collectively, the
                 &quot;Services&quot;).
@@ -245,7 +245,7 @@ export default function PrivacyPage() {
                 4. Google API Services User Data
               </h2>
               <p className="mb-4">
-                Hedwiq&apos;s use and transfer of information received from
+                Luframe&apos;s use and transfer of information received from
                 Google APIs adheres to the{" "}
                 <a
                   href="https://developers.google.com/terms/api-services-user-data-policy"
@@ -270,7 +270,7 @@ export default function PrivacyPage() {
               </ul>
               <p className="mb-4">
                 This data is used solely to display upcoming meetings and sync
-                meeting schedules within Hedwiq.
+                meeting schedules within Luframe.
               </p>
 
               <h3 className="text-xl font-medium mb-3">4.2 Gmail Data</h3>
@@ -542,10 +542,10 @@ export default function PrivacyPage() {
               <p>
                 To exercise these rights, please contact us at{" "}
                 <a
-                  href="mailto:support@hedwiq.app"
+                  href="mailto:support@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@hedwiq.app
+                  support@luframe.com
                 </a>
                 . We will respond within 30 days.
               </p>
@@ -586,10 +586,10 @@ export default function PrivacyPage() {
               <p>
                 To submit a request, please email{" "}
                 <a
-                  href="mailto:support@hedwiq.app"
+                  href="mailto:support@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@hedwiq.app
+                  support@luframe.com
                 </a>{" "}
                 with the subject line &quot;California Privacy Request.&quot;
               </p>
@@ -601,7 +601,7 @@ export default function PrivacyPage() {
                 12. International Data Transfers
               </h2>
               <p className="mb-4">
-                Hedwiq is based in the United States. Your information may be
+                Luframe is based in the United States. Your information may be
                 transferred to, stored, and processed in the United States or
                 other countries where our service providers operate.
               </p>
@@ -627,10 +627,10 @@ export default function PrivacyPage() {
                 If you believe we have collected information from a child under
                 18, please contact us immediately at{" "}
                 <a
-                  href="mailto:support@hedwiq.app"
+                  href="mailto:support@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@hedwiq.app
+                  support@luframe.com
                 </a>
                 , and we will promptly delete such information.
               </p>
@@ -678,10 +678,10 @@ export default function PrivacyPage() {
                 <p>
                   Email:{" "}
                   <a
-                    href="mailto:support@hedwiq.app"
+                    href="mailto:support@luframe.com"
                     className="text-primary hover:underline"
                   >
-                    support@hedwiq.app
+                    support@luframe.com
                   </a>
                 </p>
               </div>
