@@ -11,7 +11,7 @@ const footerLinks = {
   company: [
     { label: "About", href: "/about" },
     { label: "Blog", href: "/blog" },
-    { label: "Contact", href: "/contact" },
+    { label: "Contact", href: "mailto:support@hedwiq.app" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
@@ -40,9 +40,15 @@ export function Footer() {
                   Hedwiq
                 </span>
               </Link>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 Transform your meetings into real-time action.
               </p>
+              <a
+                href="mailto:support@hedwiq.app"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                support@hedwiq.app
+              </a>
             </div>
 
             {/* Product Links */}
@@ -108,11 +114,11 @@ export function Footer() {
           {/* Bottom */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              {currentYear} Hedwiq. All rights reserved.
+              © {currentYear} Selectra Group, Inc. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
               <Link
-                href="https://twitter.com"
+                href="https://twitter.com/hedwiqapp"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Twitter"
@@ -128,7 +134,7 @@ export function Footer() {
                 </svg>
               </Link>
               <Link
-                href="https://linkedin.com"
+                href="https://linkedin.com/company/hedwiq"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
