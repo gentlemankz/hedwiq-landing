@@ -375,26 +375,20 @@ export function Features() {
               </p>
               {/* Supported document types */}
               <div className="flex items-center gap-3 sm:gap-4">
-                <Image
+                <img
                   src="/PDF_file_icon.svg"
                   alt="PDF"
-                  width={36}
-                  height={37}
-                  className="w-7 h-auto sm:w-9"
+                  className="w-7 sm:w-9"
                 />
-                <Image
+                <img
                   src="/Google_Google_Sheets_0.svg"
                   alt="Google Sheets"
-                  width={32}
-                  height={32}
-                  className="w-6 h-auto sm:w-8"
+                  className="w-6 sm:w-8"
                 />
-                <Image
+                <img
                   src="/Google_Google_Docs_0.svg"
                   alt="Google Docs"
-                  width={32}
-                  height={32}
-                  className="w-6 h-auto sm:w-8"
+                  className="w-6 sm:w-8"
                 />
               </div>
             </div>
@@ -414,6 +408,7 @@ export function Features() {
                   src="/art1.jpg"
                   alt="Team collaboration"
                   fill
+                  priority
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
