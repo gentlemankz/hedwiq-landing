@@ -17,6 +17,7 @@ interface PricingTier {
   description: string;
   monthlyPrice: number | null;
   annualPrice: number | null;
+  originalAnnualPrice?: number;
   priceNote?: string;
   popular?: boolean;
   features: string[];
@@ -45,8 +46,9 @@ const PRICING_TIERS: PricingTier[] = [
   {
     name: "Pro",
     description: "For professionals who need more",
-    monthlyPrice: 39,
-    annualPrice: 29,
+    monthlyPrice: 16,
+    annualPrice: 8,
+    originalAnnualPrice: 10,
     features: [
       "3000 minutes/month",
       "AI Insights and Actions",
@@ -57,15 +59,15 @@ const PRICING_TIERS: PricingTier[] = [
       "30-day retention",
       "300 Email Drafts",
     ],
-    cta: "Start Free Trial",
+    cta: "Upgrade to Pro",
     ctaHref: "/signup?plan=pro",
     ctaVariant: "outline",
   },
   {
-    name: "Team",
+    name: "Business",
     description: "Perfect for growing teams",
-    monthlyPrice: 69,
-    annualPrice: 55,
+    monthlyPrice: 30,
+    annualPrice: 19.99,
     popular: true,
     features: [
       "Unlimited meetings",
@@ -74,8 +76,8 @@ const PRICING_TIERS: PricingTier[] = [
       "20 GB storage/user",
       "90-day retention",
     ],
-    cta: "Start Free Trial",
-    ctaHref: "/signup?plan=team",
+    cta: "Upgrade to Business",
+    ctaHref: "/signup?plan=business",
   },
   {
     name: "Enterprise",
@@ -140,7 +142,17 @@ function PricingCard({
       <div className="mb-6">
         {price !== null ? (
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-bold text-foreground">${price}</span>
+            <span className="text-4xl font-bold text-foreground">
+              ${Math.floor(price)}
+              {price % 1 !== 0 && (
+                <span className="text-lg align-super">.{String(price).split('.')[1]}</span>
+              )}
+              {isAnnual && tier.originalAnnualPrice && (
+                <span className="text-sm text-muted-foreground line-through align-super ml-0.5">
+                  ${tier.originalAnnualPrice}
+                </span>
+              )}
+            </span>
             <span className="text-muted-foreground">/user/mo</span>
           </div>
         ) : (
