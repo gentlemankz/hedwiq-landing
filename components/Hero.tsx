@@ -9,6 +9,22 @@ import { RiskReversal } from "@/components/RiskReversal";
 import { TrustedBy } from "@/components/TrustedBy";
 import { AnimatedSection } from "@/components/AnimatedSection";
 
+// ============================================================================
+// App URL Configuration
+// ============================================================================
+
+function getAppUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (envUrl) return envUrl;
+
+  if (process.env.NODE_ENV === "production") {
+    return "https://app.luframe.com";
+  }
+  return "http://localhost:3000";
+}
+
+const APP_URL = getAppUrl();
+
 export function Hero() {
   return (
     <>
@@ -57,7 +73,7 @@ export function Hero() {
               <AnimatedSection delay={300}>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button size="lg" className="rounded-full px-8" asChild>
-                    <Link href="/signup">Start Free Trial</Link>
+                    <a href={`${APP_URL}/sign-up`}>Start Free Trial</a>
                   </Button>
                   <Button variant="outline" size="lg" className="rounded-full px-8" asChild>
                     <Link href="/#demo">Watch Demo</Link>

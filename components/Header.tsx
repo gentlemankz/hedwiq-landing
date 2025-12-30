@@ -8,6 +8,26 @@ import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 
 // ============================================================================
+// App URL Configuration
+// ============================================================================
+
+/**
+ * Get the app URL for auth redirects.
+ * Falls back to production URL in production, localhost in development.
+ */
+function getAppUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (envUrl) return envUrl;
+
+  if (process.env.NODE_ENV === "production") {
+    return "https://app.luframe.com";
+  }
+  return "http://localhost:3000";
+}
+
+const APP_URL = getAppUrl();
+
+// ============================================================================
 // Navigation Configuration
 // ============================================================================
 
@@ -70,10 +90,10 @@ function MobileMenu({
           ))}
           <div className="pt-4 space-y-3 border-t border-border mt-4">
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/signin">Sign In</Link>
+              <a href={`${APP_URL}/sign-in`}>Sign In</a>
             </Button>
             <Button className="w-full rounded-full" asChild>
-              <Link href="/signup">Get Started</Link>
+              <a href={`${APP_URL}/sign-up`}>Get Started</a>
             </Button>
           </div>
         </div>
@@ -141,10 +161,10 @@ export function Header() {
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center gap-3">
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/signin">Sign In</Link>
+                <a href={`${APP_URL}/sign-in`}>Sign In</a>
               </Button>
               <Button size="sm" className="rounded-full" asChild>
-                <Link href="/signup">Get Started</Link>
+                <a href={`${APP_URL}/sign-up`}>Get Started</a>
               </Button>
             </div>
 

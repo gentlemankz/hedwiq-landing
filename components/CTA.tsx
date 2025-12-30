@@ -1,9 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "@/components/AnimatedSection";
+
+// ============================================================================
+// App URL Configuration
+// ============================================================================
+
+function getAppUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (envUrl) return envUrl;
+
+  if (process.env.NODE_ENV === "production") {
+    return "https://app.luframe.com";
+  }
+  return "http://localhost:3000";
+}
+
+const APP_URL = getAppUrl();
 
 export function CTA() {
   return (
@@ -37,7 +52,7 @@ export function CTA() {
                 className="rounded-full px-10 py-6 text-lg bg-blue-600 text-white hover:bg-blue-700"
                 asChild
               >
-                <Link href="/signup">Get Started</Link>
+                <a href={`${APP_URL}/sign-up`}>Get Started</a>
               </Button>
             </div>
           </div>
