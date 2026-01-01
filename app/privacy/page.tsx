@@ -542,10 +542,10 @@ export default function PrivacyPage() {
               <p>
                 To exercise these rights, please contact us at{" "}
                 <a
-                  href="mailto:support@luframe.com"
+                  href="mailto:admin@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@luframe.com
+                  admin@luframe.com
                 </a>
                 . We will respond within 30 days.
               </p>
@@ -586,10 +586,10 @@ export default function PrivacyPage() {
               <p>
                 To submit a request, please email{" "}
                 <a
-                  href="mailto:support@luframe.com"
+                  href="mailto:admin@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@luframe.com
+                  admin@luframe.com
                 </a>{" "}
                 with the subject line &quot;California Privacy Request.&quot;
               </p>
@@ -627,10 +627,10 @@ export default function PrivacyPage() {
                 If you believe we have collected information from a child under
                 18, please contact us immediately at{" "}
                 <a
-                  href="mailto:support@luframe.com"
+                  href="mailto:admin@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@luframe.com
+                  admin@luframe.com
                 </a>
                 , and we will promptly delete such information.
               </p>
@@ -678,10 +678,10 @@ export default function PrivacyPage() {
                 <p>
                   Email:{" "}
                   <a
-                    href="mailto:support@luframe.com"
+                    href="mailto:admin@luframe.com"
                     className="text-primary hover:underline"
                   >
-                    support@luframe.com
+                    admin@luframe.com
                   </a>
                 </p>
               </div>

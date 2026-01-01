@@ -482,10 +482,10 @@ export default function TermsPage() {
                 You may cancel your subscription at any time through your
                 account settings or by contacting us at{" "}
                 <a
-                  href="mailto:support@luframe.com"
+                  href="mailto:admin@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@luframe.com
+                  admin@luframe.com
                 </a>
                 .
               </p>
@@ -649,10 +649,10 @@ export default function TermsPage() {
               <p>
                 You may terminate your account at any time by contacting us at{" "}
                 <a
-                  href="mailto:support@luframe.com"
+                  href="mailto:admin@luframe.com"
                   className="text-primary hover:underline"
                 >
-                  support@luframe.com
+                  admin@luframe.com
                 </a>
                 .
               </p>
@@ -724,10 +724,10 @@ export default function TermsPage() {
                 <p>
                   Email:{" "}
                   <a
-                    href="mailto:support@luframe.com"
+                    href="mailto:admin@luframe.com"
                     className="text-primary hover:underline"
                   >
-                    support@luframe.com
+                    admin@luframe.com
                   </a>
                 </p>
               </div>

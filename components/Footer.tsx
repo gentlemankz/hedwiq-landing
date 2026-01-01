@@ -11,7 +11,7 @@ const footerLinks = {
   company: [
     { label: "About", href: "/about" },
     { label: "Blog", href: "/blog" },
-    { label: "Contact", href: "mailto:support@luframe.com" },
+    { label: "Contact", href: "mailto:admin@luframe.com" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
@@ -44,10 +44,10 @@ export function Footer() {
                 Transform your meetings into real-time action.
               </p>
               <a
-                href="mailto:support@luframe.com"
+                href="mailto:admin@luframe.com"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                support@luframe.com
+                admin@luframe.com
               </a>
             </div>
 
