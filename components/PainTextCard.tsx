@@ -76,22 +76,22 @@ export function PainTextCard({ type, progress, className }: PainTextCardProps) {
   const Icon = config.icon;
 
   // Animation states using shared hook
-  const { isVisible, opacity, translateY, scale } = useProgressAnimation(progress, {
-    translateDistance: 20, // Slightly less than default
-    scaleRange: [0.95, 1],
+  // Note: Parent (ChaosToOrderTransition) handles transform animation
+  // We only handle opacity here to avoid double-animation jank on Safari
+  const { isVisible, opacity } = useProgressAnimation(progress, {
+    translateDistance: 0, // Parent handles transform
+    scaleRange: [1, 1],   // Parent handles scale
   });
 
   return (
     <div
       className={cn(
         "relative p-4 sm:p-5 rounded-xl border bg-card/80 backdrop-blur-sm shadow-lg",
-        "transition-all duration-300",
         config.borderColor,
         className
       )}
       style={{
         opacity: isVisible ? opacity : 0,
-        transform: `translateY(${translateY}px) scale(${scale})`,
         pointerEvents: isVisible ? "auto" : "none",
       }}
     >

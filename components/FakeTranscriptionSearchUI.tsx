@@ -47,8 +47,11 @@ export function FakeTranscriptionSearchUI({
   }, [progress]);
 
   // Animation states using shared hook
-  const { isVisible, style } = useProgressAnimation(progress, {
-    scaleRange: [1, 1], // No scale animation for this component
+  // Note: Parent (ChaosToOrderTransition) handles transform animation
+  // We only handle opacity here to avoid double-animation jank on Safari
+  const { isVisible, opacity } = useProgressAnimation(progress, {
+    translateDistance: 0, // Parent handles transform
+    scaleRange: [1, 1],
   });
   const searchActive = progress > 0.15;
 
@@ -56,10 +59,12 @@ export function FakeTranscriptionSearchUI({
     <div
       className={cn(
         "relative rounded-xl border border-orange-200 dark:border-orange-900/50 bg-card/90 backdrop-blur-sm shadow-lg overflow-hidden",
-        "transition-all duration-300",
         className
       )}
-      style={style}
+      style={{
+        opacity: isVisible ? opacity : 0,
+        pointerEvents: isVisible ? "auto" : "none",
+      }}
     >
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">

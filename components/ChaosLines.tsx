@@ -1,7 +1,13 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
+import { getCachedIsSafari } from "@/lib/browser";
+
+// Subscribe function for useSyncExternalStore (browser type never changes)
+const subscribeNoop = () => () => {};
+const getIsSafariSnapshot = () => getCachedIsSafari();
+const getIsSafariServerSnapshot = () => false;
 
 interface ChaosLinesProps {
   progress: number; // 0 to 1
@@ -153,6 +159,13 @@ export function ChaosLines({ progress, className }: ChaosLinesProps) {
   const animationRef = useRef<number | null>(null);
   const displayedOffsetRef = useRef<number | null>(null);
 
+  // Detect Safari for performance optimizations (skip blur glow)
+  const isSafari = useSyncExternalStore(
+    subscribeNoop,
+    getIsSafariSnapshot,
+    getIsSafariServerSnapshot
+  );
+
   useEffect(() => {
     queueMicrotask(() => setIsClient(true));
   }, []);
@@ -234,20 +247,22 @@ export function ChaosLines({ progress, className }: ChaosLinesProps) {
       preserveAspectRatio="xMidYMid meet"
       style={{ overflow: "visible" }}
     >
-      {/* Soft glow/shadow effect */}
-      <path
-        ref={glowRef}
-        d={SCRIBBLE_PATH}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={8}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-foreground/5 dark:text-foreground/5"
-        style={{
-          filter: "blur(6px)",
-        }}
-      />
+      {/* Soft glow/shadow effect - skip on Safari due to SVG filter performance issues */}
+      {!isSafari && (
+        <path
+          ref={glowRef}
+          d={SCRIBBLE_PATH}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={8}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-foreground/5 dark:text-foreground/5"
+          style={{
+            filter: "blur(6px)",
+          }}
+        />
+      )}
 
       {/* Main scribble line */}
       <path

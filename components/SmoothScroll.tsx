@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { getCachedIsSafari } from "@/lib/browser";
 
 interface SmoothScrollProps {
   children: React.ReactNode;
@@ -14,6 +15,14 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
   const previousLagSmoothingRef = useRef<{ lag: number; minFPS: number } | null>(null);
 
   useEffect(() => {
+    // Skip Lenis on Safari/iOS - it conflicts with ScrollTrigger pinning
+    // and causes rubber-banding/hitching during scroll
+    const isSafari = getCachedIsSafari();
+    if (isSafari) {
+      // On Safari, just use native scroll - ScrollTrigger works better without Lenis
+      return;
+    }
+
     // Store previous GSAP lagSmoothing settings to restore on cleanup
     // GSAP doesn't expose a getter, so we track that we changed it
     previousLagSmoothingRef.current = { lag: 500, minFPS: 20 }; // GSAP defaults
@@ -32,7 +41,28 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
 
     lenisRef.current = lenis;
 
-    // Connect Lenis to GSAP ScrollTrigger
+    // Setup ScrollTrigger scroller proxy for proper Lenis integration
+    // This fixes conflicts between Lenis transforms and ScrollTrigger pinning
+    ScrollTrigger.scrollerProxy(document.body, {
+      scrollTop(value) {
+        if (arguments.length && value !== undefined) {
+          lenis.scrollTo(value, { immediate: true });
+        }
+        return lenis.scroll;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+      // Use "fixed" pinType to avoid transform conflicts with Lenis
+      pinType: "fixed",
+    });
+
+    // Connect Lenis scroll events to ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
     // Store the callback reference so we can properly remove it
@@ -44,8 +74,12 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     // Use GSAP ticker for smooth animation frame updates
     gsap.ticker.add(rafCallback);
 
-    // Disable GSAP's default lag smoothing for better sync
-    gsap.ticker.lagSmoothing(0);
+    // Keep lag smoothing enabled for Safari compatibility (less aggressive setting)
+    // Completely disabling it (lagSmoothing(0)) causes jank on slower devices
+    gsap.ticker.lagSmoothing(200, 20);
+
+    // Refresh ScrollTrigger after Lenis is fully initialized
+    ScrollTrigger.refresh();
 
     // Cleanup
     return () => {
@@ -62,6 +96,9 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
           previousLagSmoothingRef.current.minFPS
         );
       }
+
+      // Clear the scroller proxy
+      ScrollTrigger.scrollerProxy(document.body, undefined);
 
       // Destroy Lenis instance
       lenis.destroy();

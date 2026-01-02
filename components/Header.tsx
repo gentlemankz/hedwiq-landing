@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
+import { getCachedIsSafari } from "@/lib/browser";
+
+// Subscribe function for useSyncExternalStore (browser type never changes)
+const subscribeNoop = () => () => {};
+const getIsSafariSnapshot = () => getCachedIsSafari();
+const getIsSafariServerSnapshot = () => false;
 
 // ============================================================================
 // App URL Configuration
@@ -49,9 +55,11 @@ const NAV_ITEMS: NavItem[] = [
 function MobileMenu({
   isOpen,
   onClose,
+  isSafari,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  isSafari: boolean;
 }) {
   return (
     <div
@@ -60,9 +68,14 @@ function MobileMenu({
         isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       )}
     >
-      {/* Backdrop */}
+      {/* Backdrop - use solid background on Safari for better performance */}
       <div
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+        className={cn(
+          "absolute inset-0",
+          isSafari
+            ? "bg-background/90" // Solid background for Safari
+            : "bg-background/80 backdrop-blur-sm" // Blur for other browsers
+        )}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -109,6 +122,13 @@ function MobileMenu({
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Detect Safari for performance optimizations
+  const isSafari = useSyncExternalStore(
+    subscribeNoop,
+    getIsSafariSnapshot,
+    getIsSafariServerSnapshot
+  );
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
   };
@@ -119,7 +139,15 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Use solid background on Safari to avoid backdrop-filter performance issues */}
+      <header
+        className={cn(
+          "sticky top-0 z-50 w-full border-b",
+          isSafari
+            ? "bg-background/98" // Solid background for Safari
+            : "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+        )}
+      >
         <div className="w-full px-6 md:px-12 lg:px-24">
           <nav
             className="flex h-16 items-center justify-between"
@@ -189,7 +217,7 @@ export function Header() {
       </header>
 
       {/* Mobile Menu */}
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} isSafari={isSafari} />
     </>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect, useCallback, memo } from "react";
 import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
+import { getCachedIsSafari } from "@/lib/browser";
 import { ChaosLines } from "@/components/ChaosLines";
 import { PainTextCard } from "@/components/PainTextCard";
 import { FakeTranscriptionSearchUI } from "@/components/FakeTranscriptionSearchUI";
@@ -129,6 +130,9 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
   const targetDotRef = useRef<Element | null>(null);
   const targetDotFoundRef = useRef(false);
 
+  // Safari detection (cached on first render)
+  const isSafariRef = useRef<boolean | null>(null);
+
   // Viewport dimensions ref
   const viewportRef = useRef({ width: 0, height: 0 });
 
@@ -153,6 +157,12 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
 
   // Direct DOM update function (called via RAF, no React re-renders)
   const updateDOM = useCallback(() => {
+    // Cache Safari detection on first call
+    if (isSafariRef.current === null) {
+      isSafariRef.current = getCachedIsSafari();
+    }
+    const isSafari = isSafariRef.current;
+
     const painProgress = painProgressRef.current;
     const travelProgress = travelProgressRef.current;
 
@@ -184,7 +194,8 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
     if (chaosContainerRef.current) {
       chaosContainerRef.current.style.opacity = String(1 - morphEased);
       chaosContainerRef.current.style.transform = `scale(${1 - morphEased * 0.8})`;
-      chaosContainerRef.current.style.filter = `blur(${morphEased * 4}px)`;
+      // Skip blur animation on Safari - it's expensive and causes jank
+      chaosContainerRef.current.style.filter = isSafari ? "none" : `blur(${morphEased * 4}px)`;
     }
 
     // Update pain cards
@@ -213,12 +224,15 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
       }
 
       const cardOpacity = progress > 0 ? Math.min(1, progress * 3) * formationOpacity : 0;
-      const cardScale = progress > 0 ? 0.9 + progress * 0.1 : 0.9;
-      const cardTranslateY = progress > 0 ? 0 : 20;
+      // Smooth interpolation instead of discontinuous jump - prevents Safari shaking
+      const cardScale = 0.9 + progress * 0.1;
+      const cardTranslateY = 20 * (1 - progress); // Smoothly interpolate from 20 to 0
 
       cardEl.style.opacity = String(cardOpacity);
-      cardEl.style.transform = `scale(${cardScale}) translateY(${cardTranslateY}px) ${formationTransform}`;
-      cardEl.style.filter = morphProgress > 0 ? `blur(${morphEased * 3}px)` : "none";
+      // Use translate3d to force GPU layer promotion on Safari
+      cardEl.style.transform = `translate3d(0, ${cardTranslateY}px, 0) scale(${cardScale}) ${formationTransform}`;
+      // Skip blur animation on Safari - it causes significant performance issues
+      cardEl.style.filter = isSafari ? "none" : (morphProgress > 0 ? `blur(${morphEased * 3}px)` : "none");
       cardEl.style.pointerEvents = progress > 0.1 && morphProgress < 0.3 ? "auto" : "none";
     });
 
@@ -248,7 +262,8 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
       centerPointRef.current.style.width = `${morphEased * 120}px`;
       centerPointRef.current.style.height = `${morphEased * 120}px`;
       centerPointRef.current.style.opacity = String(morphProgress > 0.3 ? (morphEased - 0.3) / 0.7 : 0);
-      centerPointRef.current.style.filter = `blur(${20 - morphEased * 15}px)`;
+      // Skip blur animation on Safari - use simpler opacity instead
+      centerPointRef.current.style.filter = isSafari ? "none" : `blur(${20 - morphEased * 15}px)`;
       centerPointRef.current.style.transform = `translate(-50%, -50%) scale(${0.5 + morphEased * 0.5})`;
     }
 
@@ -451,7 +466,8 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
                 style={{
                   ...pain.position,
                   opacity: 0,
-                  transform: "scale(0.9) translateY(20px)",
+                  transform: "translate3d(0, 20px, 0) scale(0.9)",
+                  willChange: "transform, opacity", // Hint to Safari compositor
                 }}
               >
                 <MemoizedPainCard pain={pain} progress={painCardProgress[index]} />
