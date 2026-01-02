@@ -399,30 +399,10 @@ interface FeaturesProps {
 export function Features({ showLiveDot = false }: FeaturesProps) {
   const liveDotRef = useRef<HTMLSpanElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const [dotVisible, setDotVisible] = useState(false);
 
-  // Use GSAP to detect when the section is in view and show the dot
-  useGSAP(
-    () => {
-      if (!sectionRef.current) return;
-
-      // Create a scroll trigger that shows the dot when Features section enters
-      const trigger = ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top center+=100",
-        onEnter: () => setDotVisible(true),
-        onLeaveBack: () => setDotVisible(false),
-      });
-
-      return () => {
-        trigger.kill();
-      };
-    },
-    { scope: sectionRef }
-  );
-
-  // Combined visibility: either from scroll trigger or from parent prop
-  const isDotVisible = dotVisible || showLiveDot;
+  // Dot visibility is controlled entirely by parent (ChaosToOrderTransition)
+  // The dot only appears when the traveling circle reaches the "i"
+  const isDotVisible = showLiveDot;
 
   return (
     <section

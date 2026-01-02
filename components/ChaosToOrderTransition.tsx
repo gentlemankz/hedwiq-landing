@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { ChaosLines } from "@/components/ChaosLines";
@@ -113,9 +113,9 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
       const painTrigger = ScrollTrigger.create({
         trigger: painSectionRef.current,
         start: "top top",
-        end: "+=200%", // Scroll for 2x viewport while pinned
+        end: "+=200%",
         pin: pinnedContentRef.current,
-        scrub: 0.5,
+        scrub: 0.8, // Balanced scrub
         onUpdate: (self) => {
           setPainProgress(self.progress);
         },
@@ -136,9 +136,9 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
       // Travel trigger - NOT pinned, circle moves as page scrolls
       const travelTrigger = ScrollTrigger.create({
         trigger: featuresWrapperRef.current,
-        start: "top bottom", // Start when Features top hits viewport bottom
-        end: "top center-=100", // End when Features top reaches center
-        scrub: 0.3,
+        start: "top bottom",
+        end: "top center",
+        scrub: 0.6, // Responsive travel
         onUpdate: (self) => {
           setTravelProgress(self.progress);
         },
@@ -155,38 +155,34 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
   useEffect(() => {
     if (!travelingCircleRef.current) return;
 
+    // Constants for consistent animation
+    const startX = window.innerWidth / 2;
+    const startY = window.innerHeight / 2; // Match morph end position exactly
+    const startSize = 60;
+
     // Find the target dot
     const targetDot = document.querySelector('[data-live-dot="true"]');
 
     if (travelProgress > 0 && targetDot) {
       const targetRect = targetDot.getBoundingClientRect();
 
-      // Start: center of viewport
-      const startX = window.innerWidth / 2;
-      const startY = window.innerHeight * 0.4; // Slightly above center
-
       // End: the "i" dot position
       const endX = targetRect.left + targetRect.width / 2;
       const endY = targetRect.top + targetRect.height / 2;
+      const endSize = Math.max(targetRect.width, 6);
 
-      // Eased progress for smooth movement
+      // Use smoother easing for the travel
       const easedTravel = easeInOutQuart(travelProgress);
 
-      // Bezier curve for natural path
-      const controlY = startY + (endY - startY) * 0.2;
-      const t = easedTravel;
+      // Simple linear interpolation (no bezier jumps)
+      const currentX = startX + (endX - startX) * easedTravel;
+      const currentY = startY + (endY - startY) * easedTravel;
+      const currentSize = startSize + (endSize - startSize) * easedTravel;
 
-      // Quadratic bezier
-      const currentX = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * ((startX + endX) / 2) + t * t * endX;
-      const currentY = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * endY;
-
-      // Size: 60px → 8px (dot size)
-      const startSize = 60;
-      const endSize = Math.max(targetRect.width * 1.2, 8);
-      const currentSize = startSize - (startSize - endSize) * easedTravel;
-
-      // Opacity: fade out at the very end
-      const opacity = travelProgress > 0.92 ? 1 - ((travelProgress - 0.92) / 0.08) : 1;
+      // Smooth opacity fade at the very end
+      const opacity = travelProgress > 0.85
+        ? Math.max(0, 1 - ((travelProgress - 0.85) / 0.15))
+        : 1;
 
       setCircleStyle({
         x: currentX,
@@ -195,13 +191,14 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
         opacity,
       });
     } else if (morphProgress > 0.5) {
-      // During morph phase (before travel starts), circle is at center
+      // During morph phase (before travel starts), circle forms at center
       const formProgress = (morphProgress - 0.5) / 0.5;
+      const easedForm = easeOutCubic(formProgress);
       setCircleStyle({
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2,
-        size: 60 * easeOutCubic(formProgress),
-        opacity: easeOutCubic(formProgress),
+        x: startX,
+        y: startY,
+        size: startSize * easedForm,
+        opacity: easedForm,
       });
     } else {
       setCircleStyle({ x: 0, y: 0, size: 0, opacity: 0 });
@@ -405,7 +402,12 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
 
       {/* Features section wrapper - for travel trigger */}
       <div ref={featuresWrapperRef} data-features-wrapper="true">
-        {children}
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child, { showLiveDot } as React.Attributes);
+          }
+          return child;
+        })}
       </div>
     </div>
   );
