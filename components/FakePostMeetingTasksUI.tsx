@@ -11,7 +11,7 @@ import {
   Clock,
 } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
-import { useProgressAnimation, useStaggeredAnimation } from "@/hooks/useProgressAnimation";
+import { useProgressAnimation } from "@/hooks/useProgressAnimation";
 
 interface FakePostMeetingTasksUIProps {
   progress: number; // 0 to 1

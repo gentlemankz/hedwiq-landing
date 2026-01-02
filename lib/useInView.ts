@@ -44,7 +44,8 @@ export function useInView<T extends HTMLElement = HTMLDivElement>(
     // Check for IntersectionObserver support
     if (typeof IntersectionObserver === "undefined") {
       // Fallback for older browsers - assume in view
-      setIsInView(true);
+      // Use queueMicrotask to avoid synchronous setState in effect
+      queueMicrotask(() => setIsInView(true));
       return;
     }
 

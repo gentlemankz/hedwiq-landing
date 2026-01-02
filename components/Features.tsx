@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { FakeTranscriptionUI } from "@/components/FakeTranscriptionUI";
 import { FakeNoteTakerUI, type NoteTakerMode } from "@/components/FakeNoteTakerUI";
@@ -9,7 +9,6 @@ import { FakeAgendaUI } from "@/components/FakeAgendaUI";
 import { Sparkles, CheckCircle2, ListTodo, Bot } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { cn } from "@/lib/utils";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 // ============================================================================
 // Subfeature Configuration
@@ -433,20 +432,26 @@ export function Features({ showLiveDot = false }: FeaturesProps) {
               </p>
               {/* Supported document types */}
               <div className="flex items-center gap-3 sm:gap-4">
-                <img
+                <Image
                   src="/PDF_file_icon.svg"
                   alt="PDF"
-                  className="w-7 sm:w-9"
+                  width={36}
+                  height={36}
+                  className="w-7 sm:w-9 h-auto"
                 />
-                <img
+                <Image
                   src="/Google_Google_Sheets_0.svg"
                   alt="Google Sheets"
-                  className="w-6 sm:w-8"
+                  width={32}
+                  height={32}
+                  className="w-6 sm:w-8 h-auto"
                 />
-                <img
+                <Image
                   src="/Google_Google_Docs_0.svg"
                   alt="Google Docs"
-                  className="w-6 sm:w-8"
+                  width={32}
+                  height={32}
+                  className="w-6 sm:w-8 h-auto"
                 />
               </div>
             </div>

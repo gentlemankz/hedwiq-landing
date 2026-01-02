@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface ChaosLinesProps {
@@ -150,12 +150,11 @@ export function ChaosLines({ progress, className }: ChaosLinesProps) {
   const glowRef = useRef<SVGPathElement>(null);
   const [pathLength, setPathLength] = useState(0);
   const [isClient, setIsClient] = useState(false);
-  const [displayedOffset, setDisplayedOffset] = useState<number | null>(null);
   const animationRef = useRef<number | null>(null);
-  const targetOffsetRef = useRef<number>(0);
+  const displayedOffsetRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setIsClient(true);
+    queueMicrotask(() => setIsClient(true));
   }, []);
 
   useEffect(() => {
@@ -163,7 +162,7 @@ export function ChaosLines({ progress, className }: ChaosLinesProps) {
 
     const length = pathRef.current.getTotalLength();
     setPathLength(length);
-    setDisplayedOffset(length);
+    displayedOffsetRef.current = length;
     pathRef.current.style.strokeDasharray = `${length}`;
     pathRef.current.style.strokeDashoffset = `${length}`;
 
@@ -173,50 +172,52 @@ export function ChaosLines({ progress, className }: ChaosLinesProps) {
     }
   }, [isClient]);
 
-  // Smooth animation using requestAnimationFrame
-  const animateOffset = useCallback(() => {
-    if (displayedOffset === null || pathLength === 0) return;
-
-    const diff = targetOffsetRef.current - displayedOffset;
-
-    // Smooth interpolation - move 8% of the remaining distance each frame
-    // This creates a smooth, eased animation
-    if (Math.abs(diff) > 0.5) {
-      const newOffset = displayedOffset + diff * 0.08;
-      setDisplayedOffset(newOffset);
-
-      if (pathRef.current) {
-        pathRef.current.style.strokeDashoffset = `${newOffset}`;
-      }
-      if (glowRef.current) {
-        glowRef.current.style.strokeDashoffset = `${newOffset}`;
-      }
-
-      animationRef.current = requestAnimationFrame(animateOffset);
-    } else {
-      // Snap to final value when close enough
-      setDisplayedOffset(targetOffsetRef.current);
-      if (pathRef.current) {
-        pathRef.current.style.strokeDashoffset = `${targetOffsetRef.current}`;
-      }
-      if (glowRef.current) {
-        glowRef.current.style.strokeDashoffset = `${targetOffsetRef.current}`;
-      }
-    }
-  }, [displayedOffset, pathLength]);
-
+  // Animation effect - runs when progress or pathLength changes
   useEffect(() => {
-    if (pathLength === 0) return;
+    if (pathLength === 0 || displayedOffsetRef.current === null) return;
 
     // Calculate target offset based on progress
     const drawLength = pathLength * progress;
     const targetOffset = pathLength - drawLength;
-    targetOffsetRef.current = targetOffset;
 
-    // Start animation if not already running
-    if (animationRef.current === null) {
-      animationRef.current = requestAnimationFrame(animateOffset);
+    // Animation loop function
+    const animate = () => {
+      const currentOffset = displayedOffsetRef.current;
+      if (currentOffset === null) return;
+
+      const diff = targetOffset - currentOffset;
+
+      // Smooth interpolation - move 8% of the remaining distance each frame
+      if (Math.abs(diff) > 0.5) {
+        const newOffset = currentOffset + diff * 0.08;
+        displayedOffsetRef.current = newOffset;
+
+        if (pathRef.current) {
+          pathRef.current.style.strokeDashoffset = `${newOffset}`;
+        }
+        if (glowRef.current) {
+          glowRef.current.style.strokeDashoffset = `${newOffset}`;
+        }
+
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        // Snap to final value when close enough
+        displayedOffsetRef.current = targetOffset;
+        if (pathRef.current) {
+          pathRef.current.style.strokeDashoffset = `${targetOffset}`;
+        }
+        if (glowRef.current) {
+          glowRef.current.style.strokeDashoffset = `${targetOffset}`;
+        }
+        animationRef.current = null;
+      }
+    };
+
+    // Start animation
+    if (animationRef.current !== null) {
+      cancelAnimationFrame(animationRef.current);
     }
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
       if (animationRef.current !== null) {
@@ -224,17 +225,7 @@ export function ChaosLines({ progress, className }: ChaosLinesProps) {
         animationRef.current = null;
       }
     };
-  }, [progress, pathLength, animateOffset]);
-
-  // Keep animation running while there's a difference
-  useEffect(() => {
-    if (displayedOffset === null || pathLength === 0) return;
-
-    const diff = Math.abs(targetOffsetRef.current - displayedOffset);
-    if (diff > 0.5 && animationRef.current === null) {
-      animationRef.current = requestAnimationFrame(animateOffset);
-    }
-  }, [displayedOffset, pathLength, animateOffset]);
+  }, [progress, pathLength]);
 
   return (
     <svg

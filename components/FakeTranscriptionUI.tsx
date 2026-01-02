@@ -20,13 +20,10 @@ import {
   AlertCircle,
   FileText,
   ExternalLink,
-  X,
-  Download,
   ChevronLeft,
   ChevronRight,
   ZoomIn,
   ZoomOut,
-  RotateCw,
 } from "lucide-react";
 
 // ============================================================================

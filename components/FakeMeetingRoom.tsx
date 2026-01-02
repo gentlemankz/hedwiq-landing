@@ -17,7 +17,6 @@ import { useInView } from "@/lib/useInView";
 import {
   Mic,
   MicOff,
-  Video,
   VideoOff,
   Monitor,
   PhoneOff,

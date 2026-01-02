@@ -67,17 +67,15 @@ export function useProgressAnimation(
   progress: number,
   config: ProgressAnimationConfig = {}
 ): ProgressAnimationResult {
-  const mergedConfig = { ...DEFAULT_CONFIG, ...config };
+  const {
+    opacityMultiplier = DEFAULT_CONFIG.opacityMultiplier,
+    translateMultiplier = DEFAULT_CONFIG.translateMultiplier,
+    translateDistance = DEFAULT_CONFIG.translateDistance,
+    scaleRange = DEFAULT_CONFIG.scaleRange,
+    visibilityThreshold = DEFAULT_CONFIG.visibilityThreshold,
+  } = config;
 
   return useMemo(() => {
-    const {
-      opacityMultiplier,
-      translateMultiplier,
-      translateDistance,
-      scaleRange,
-      visibilityThreshold,
-    } = mergedConfig;
-
     const isVisible = progress > visibilityThreshold;
     const opacity = Math.min(1, progress * opacityMultiplier);
     const translateY =
@@ -101,11 +99,11 @@ export function useProgressAnimation(
     };
   }, [
     progress,
-    mergedConfig.opacityMultiplier,
-    mergedConfig.translateMultiplier,
-    mergedConfig.translateDistance,
-    mergedConfig.scaleRange,
-    mergedConfig.visibilityThreshold,
+    opacityMultiplier,
+    translateMultiplier,
+    translateDistance,
+    scaleRange,
+    visibilityThreshold,
   ]);
 }
 
