@@ -30,7 +30,7 @@ const PAIN_POINTS: {
     id: "meetings-block",
     type: "meetings-block",
     componentType: "text",
-    position: { top: "15%", left: "5%" },
+    position: { top: "22%", left: "5%" },
     startProgress: 0.02,
     endProgress: 0.18,
   },
@@ -38,23 +38,23 @@ const PAIN_POINTS: {
     id: "time-waste",
     type: "time-waste",
     componentType: "transcription-ui",
-    position: { top: "10%", right: "5%" },
+    position: { top: "18%", right: "5%" },
     startProgress: 0.14,
     endProgress: 0.32,
-  },
-  {
-    id: "forgotten-info",
-    type: "forgotten-info",
-    componentType: "text",
-    position: { bottom: "15%", left: "5%" },
-    startProgress: 0.28,
-    endProgress: 0.48,
   },
   {
     id: "post-meeting",
     type: "post-meeting",
     componentType: "tasks-ui",
-    position: { bottom: "10%", right: "5%" },
+    position: { bottom: "3%", left: "5%" },
+    startProgress: 0.28,
+    endProgress: 0.48,
+  },
+  {
+    id: "forgotten-info",
+    type: "forgotten-info",
+    componentType: "text",
+    position: { bottom: "8%", right: "5%" },
     startProgress: 0.42,
     endProgress: 0.62,
   },
@@ -433,10 +433,10 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
           {/* Section header */}
           <div
             ref={headerRef}
-            className="absolute top-8 md:top-16 left-0 right-0 text-center px-4 z-20"
+            className="absolute top-20 md:top-28 left-0 right-0 text-center px-4 z-20"
             style={{ opacity: 0, transform: "translateY(30px)" }}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3">
               The Meeting Chaos Problem
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">

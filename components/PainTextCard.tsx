@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Calendar, Brain, Clock } from "lucide-react";
+import { Calendar, Brain, Clock, AlertTriangle } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
 import { useProgressAnimation } from "@/hooks/useProgressAnimation";
 
@@ -23,10 +23,8 @@ const PAIN_CONFIG: Record<
     icon: LucideIcon;
     title: string;
     description: string;
-    stat?: string;
-    iconBg: string;
-    iconColor: string;
-    borderColor: string;
+    stat: string;
+    statLabel: string;
   }
 > = {
   "meetings-block": {
@@ -35,9 +33,7 @@ const PAIN_CONFIG: Record<
     description:
       "Back-to-back meetings leave no time for deep work. Context switching kills productivity.",
     stat: "23hrs/week",
-    iconBg: "bg-red-100 dark:bg-red-950/50",
-    iconColor: "text-red-600 dark:text-red-400",
-    borderColor: "border-red-200 dark:border-red-900/50",
+    statLabel: "avg in meetings",
   },
   "forgotten-info": {
     icon: Brain,
@@ -45,29 +41,23 @@ const PAIN_CONFIG: Record<
     description:
       "Critical details slip away within hours. Key decisions and action items get lost.",
     stat: "47% lost",
-    iconBg: "bg-amber-100 dark:bg-amber-950/50",
-    iconColor: "text-amber-600 dark:text-amber-400",
-    borderColor: "border-amber-200 dark:border-amber-900/50",
+    statLabel: "within 24 hours",
   },
   "time-waste": {
     icon: Clock,
     title: "Time Wasted Searching",
     description:
       "Hours spent digging through old recordings and notes to find one piece of information.",
-    stat: "5.3hrs/week",
-    iconBg: "bg-orange-100 dark:bg-orange-950/50",
-    iconColor: "text-orange-600 dark:text-orange-400",
-    borderColor: "border-orange-200 dark:border-orange-900/50",
+    stat: "5.5hrs/week",
+    statLabel: "searching recordings",
   },
   "post-meeting": {
     icon: AlertTriangle,
     title: "Post-Meeting Overload",
     description:
       "Follow-up emails, ticket updates, CRM entries — the real work starts after meetings end.",
-    stat: "2hrs/meeting",
-    iconBg: "bg-purple-100 dark:bg-purple-950/50",
-    iconColor: "text-purple-600 dark:text-purple-400",
-    borderColor: "border-purple-200 dark:border-purple-900/50",
+    stat: "~2hrs/meeting",
+    statLabel: "on follow-ups",
   },
 };
 
@@ -76,18 +66,15 @@ export function PainTextCard({ type, progress, className }: PainTextCardProps) {
   const Icon = config.icon;
 
   // Animation states using shared hook
-  // Note: Parent (ChaosToOrderTransition) handles transform animation
-  // We only handle opacity here to avoid double-animation jank on Safari
   const { isVisible, opacity } = useProgressAnimation(progress, {
-    translateDistance: 0, // Parent handles transform
-    scaleRange: [1, 1],   // Parent handles scale
+    translateDistance: 0,
+    scaleRange: [1, 1],
   });
 
   return (
     <div
       className={cn(
-        "relative p-4 sm:p-5 rounded-xl border bg-card/80 backdrop-blur-sm shadow-lg",
-        config.borderColor,
+        "relative rounded-xl border border-red-200 dark:border-red-900/50 bg-card/95 backdrop-blur-sm shadow-lg",
         className
       )}
       style={{
@@ -95,57 +82,33 @@ export function PainTextCard({ type, progress, className }: PainTextCardProps) {
         pointerEvents: isVisible ? "auto" : "none",
       }}
     >
-      {/* Stat badge */}
-      {config.stat && (
-        <div className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3">
-          <span
-            className={cn(
-              "inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold",
-              config.iconBg,
-              config.iconColor
-            )}
-          >
-            {config.stat}
-          </span>
-        </div>
-      )}
-
-      <div className="flex items-start gap-3 sm:gap-4">
-        {/* Icon */}
-        <div
-          className={cn(
-            "shrink-0 p-2 sm:p-2.5 rounded-lg",
-            config.iconBg
-          )}
-        >
-          <Icon className={cn("size-4 sm:size-5", config.iconColor)} />
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <h4 className="text-sm sm:text-base font-semibold text-foreground mb-1">
-            {config.title}
-          </h4>
-          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            {config.description}
-          </p>
-        </div>
+      {/* Header */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30 rounded-t-xl">
+        <Icon className="size-3.5 text-red-500" />
+        <span className="text-xs font-medium">{config.title}</span>
+        <span className="ml-auto text-[10px] text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+          <Clock className="size-3" />
+          {config.statLabel}
+        </span>
       </div>
 
-      {/* Decorative chaos indicator */}
+      {/* Content */}
+      <div className="p-3">
+        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+          {config.description}
+        </p>
+      </div>
+
+      {/* Stat badge */}
       <div
-        className="absolute inset-0 rounded-xl pointer-events-none overflow-hidden"
-        style={{
-          opacity: Math.min(0.1, progress * 0.15),
-        }}
+        className={cn(
+          "absolute -top-2 -right-2 sm:-top-3 sm:-right-3 z-10 transition-all duration-300",
+          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-90"
+        )}
       >
-        <div
-          className={cn(
-            "absolute inset-0",
-            "bg-gradient-to-br from-transparent via-current to-transparent",
-            config.iconColor
-          )}
-        />
+        <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400">
+          {config.stat}
+        </span>
       </div>
     </div>
   );

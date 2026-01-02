@@ -174,7 +174,7 @@ export function FakePostMeetingTasksUI({
   return (
     <div
       className={cn(
-        "relative rounded-xl border border-purple-200 dark:border-purple-900/50 bg-card/90 backdrop-blur-sm shadow-lg overflow-hidden",
+        "relative rounded-xl border border-red-200 dark:border-red-900/50 bg-card/90 backdrop-blur-sm shadow-lg",
         className
       )}
       style={{
@@ -185,11 +185,11 @@ export function FakePostMeetingTasksUI({
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2">
-          <AlertCircle className="size-3.5 text-purple-500" />
+          <AlertCircle className="size-3.5 text-red-500" />
           <span className="text-xs font-medium">Post-Meeting Tasks</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <span className="text-[10px] text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
             <Clock className="size-3" />
             ~2hrs to complete
           </span>
@@ -206,7 +206,7 @@ export function FakePostMeetingTasksUI({
         </div>
         <div className="h-1.5 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-purple-500 rounded-full transition-all duration-300"
+            className="h-full bg-red-500 rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -241,8 +241,8 @@ export function FakePostMeetingTasksUI({
       <div
         className={cn(
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-          "px-3 py-1.5 rounded-full bg-purple-100 dark:bg-purple-950/70",
-          "text-purple-700 dark:text-purple-300 text-xs font-medium",
+          "px-3 py-1.5 rounded-full bg-red-100 dark:bg-red-950/70",
+          "text-red-700 dark:text-red-300 text-xs font-medium",
           "flex items-center gap-1.5 shadow-lg",
           "transition-all duration-500",
           progress > 0.8 ? "opacity-100 scale-100" : "opacity-0 scale-90"
@@ -255,12 +255,12 @@ export function FakePostMeetingTasksUI({
       {/* Time badge */}
       <div
         className={cn(
-          "absolute -top-2 -right-2 sm:-top-3 sm:-right-3 transition-all duration-300",
+          "absolute -top-2 -right-2 sm:-top-3 sm:-right-3 z-10 transition-all duration-300",
           isVisible ? "opacity-100 scale-100" : "opacity-0 scale-90"
         )}
       >
-        <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400">
-          2hrs/meeting
+        <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400">
+          ~2hrs/meeting
         </span>
       </div>
     </div>
