@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { FakeMeetingRoom } from "@/components/FakeMeetingRoom";
 import { RiskReversal } from "@/components/RiskReversal";
 import { TrustedBy } from "@/components/TrustedBy";
+import { PainPoints } from "@/components/PainPoints";
 import { AnimatedSection } from "@/components/AnimatedSection";
 
 // ============================================================================
@@ -107,6 +108,9 @@ export function Hero() {
       <div className="mt-8 md:mt-12">
         <TrustedBy />
       </div>
+
+      {/* Pain Points Section - Scroll-driven chaos animation */}
+      <PainPoints />
     </>
   );
 }
