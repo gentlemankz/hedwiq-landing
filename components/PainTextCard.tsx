@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { AlertTriangle, Calendar, Brain, Clock } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
+import { useProgressAnimation } from "@/hooks/useProgressAnimation";
 
 export type PainType =
   | "meetings-block"
@@ -74,11 +75,11 @@ export function PainTextCard({ type, progress, className }: PainTextCardProps) {
   const config = PAIN_CONFIG[type];
   const Icon = config.icon;
 
-  // Animation states based on progress
-  const isVisible = progress > 0;
-  const opacity = Math.min(1, progress * 2);
-  const translateY = (1 - Math.min(1, progress * 1.5)) * 20;
-  const scale = 0.95 + Math.min(1, progress * 1.5) * 0.05;
+  // Animation states using shared hook
+  const { isVisible, opacity, translateY, scale } = useProgressAnimation(progress, {
+    translateDistance: 20, // Slightly less than default
+    scaleRange: [0.95, 1],
+  });
 
   return (
     <div

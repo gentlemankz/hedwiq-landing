@@ -6,12 +6,12 @@ import {
   TicketCheck,
   Users,
   FileText,
-  CheckCircle2,
   Circle,
   AlertCircle,
   Clock,
 } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
+import { useProgressAnimation, useStaggeredAnimation } from "@/hooks/useProgressAnimation";
 
 interface FakePostMeetingTasksUIProps {
   progress: number; // 0 to 1
@@ -150,19 +150,23 @@ export function FakePostMeetingTasksUI({
   progress,
   className,
 }: FakePostMeetingTasksUIProps) {
-  // Animation states
-  const isVisible = progress > 0;
-  const opacity = Math.min(1, progress * 2);
-  const translateY = (1 - Math.min(1, progress * 1.5)) * 30;
+  // Animation states using shared hook
+  const { isVisible, style } = useProgressAnimation(progress, {
+    scaleRange: [1, 1], // No scale animation for this component
+  });
 
   // Task list progress (starts after container is visible)
   const taskProgress = Math.max(0, (progress - 0.15) / 0.7);
 
   // Count visible tasks for the counter animation
+  // This represents tasks that have appeared in the animation
   const visibleTaskCount = Math.min(
     POST_MEETING_TASKS.length,
     Math.floor(taskProgress * POST_MEETING_TASKS.length * 1.5)
   );
+
+  // Progress percentage for the bar (0-100)
+  const progressPercent = Math.round((visibleTaskCount / POST_MEETING_TASKS.length) * 100);
 
   return (
     <div
@@ -171,11 +175,7 @@ export function FakePostMeetingTasksUI({
         "transition-all duration-300",
         className
       )}
-      style={{
-        opacity: isVisible ? opacity : 0,
-        transform: `translateY(${translateY}px)`,
-        pointerEvents: isVisible ? "auto" : "none",
-      }}
+      style={style}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/30">
@@ -194,15 +194,15 @@ export function FakePostMeetingTasksUI({
       {/* Progress bar */}
       <div className="px-3 py-2 border-b border-border bg-muted/10">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] text-muted-foreground">Progress</span>
+          <span className="text-[10px] text-muted-foreground">Tasks Loading</span>
           <span className="text-[10px] font-medium text-foreground">
-            0/{POST_MEETING_TASKS.length} completed
+            {visibleTaskCount}/{POST_MEETING_TASKS.length} visible
           </span>
         </div>
         <div className="h-1.5 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-purple-500 rounded-full transition-all duration-500"
-            style={{ width: "0%" }}
+            className="h-full bg-purple-500 rounded-full transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>

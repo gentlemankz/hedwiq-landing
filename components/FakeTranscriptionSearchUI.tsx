@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Search, Clock, FileText } from "lucide-react";
+import { useProgressAnimation } from "@/hooks/useProgressAnimation";
 
 interface FakeTranscriptionSearchUIProps {
   progress: number; // 0 to 1
@@ -25,7 +26,6 @@ export function FakeTranscriptionSearchUI({
   progress,
   className,
 }: FakeTranscriptionSearchUIProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
 
   // Spotlight position animation based on progress
@@ -46,25 +46,20 @@ export function FakeTranscriptionSearchUI({
     spotlightRef.current.style.setProperty("--spotlight-y", `${y}%`);
   }, [progress]);
 
-  // Animation states
-  const isVisible = progress > 0;
-  const opacity = Math.min(1, progress * 2);
-  const translateY = (1 - Math.min(1, progress * 1.5)) * 30;
+  // Animation states using shared hook
+  const { isVisible, style } = useProgressAnimation(progress, {
+    scaleRange: [1, 1], // No scale animation for this component
+  });
   const searchActive = progress > 0.15;
 
   return (
     <div
-      ref={containerRef}
       className={cn(
         "relative rounded-xl border border-orange-200 dark:border-orange-900/50 bg-card/90 backdrop-blur-sm shadow-lg overflow-hidden",
         "transition-all duration-300",
         className
       )}
-      style={{
-        opacity: isVisible ? opacity : 0,
-        transform: `translateY(${translateY}px)`,
-        pointerEvents: isVisible ? "auto" : "none",
-      }}
+      style={style}
     >
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">
