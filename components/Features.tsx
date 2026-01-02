@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { FakeTranscriptionUI } from "@/components/FakeTranscriptionUI";
 import { FakeNoteTakerUI, type NoteTakerMode } from "@/components/FakeNoteTakerUI";
@@ -9,6 +9,7 @@ import { FakeAgendaUI } from "@/components/FakeAgendaUI";
 import { Sparkles, CheckCircle2, ListTodo, Bot } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { cn } from "@/lib/utils";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 // ============================================================================
 // Subfeature Configuration
@@ -346,12 +347,89 @@ function AgendaFeatureSection() {
 }
 
 // ============================================================================
+// Live Title with animated dot on "i"
+// ============================================================================
+
+interface LiveTitleProps {
+  dotRef: React.RefObject<HTMLSpanElement | null>;
+  showDot: boolean;
+}
+
+function LiveTitle({ dotRef, showDot }: LiveTitleProps) {
+  return (
+    <span className="relative inline-block">
+      {/* The "L" */}
+      <span>L</span>
+      {/* The "i" without dot - using positioning for the dot */}
+      <span className="relative inline-block">
+        {/* Dotless i character or styled i */}
+        <span className="relative">
+          ı
+          {/* The dot placeholder - positioned above the i */}
+          <span
+            ref={dotRef}
+            data-live-dot="true"
+            className={cn(
+              "absolute left-1/2 -translate-x-1/2 rounded-full bg-foreground",
+              "transition-all duration-500 ease-out",
+              showDot ? "opacity-100 scale-100" : "opacity-0 scale-0"
+            )}
+            style={{
+              width: '0.18em',
+              height: '0.18em',
+              top: '-0.05em',
+            }}
+          />
+        </span>
+      </span>
+      {/* The "ve" */}
+      <span>ve</span>
+    </span>
+  );
+}
+
+// ============================================================================
 // Main Features Component
 // ============================================================================
 
-export function Features() {
+interface FeaturesProps {
+  showLiveDot?: boolean;
+}
+
+export function Features({ showLiveDot = false }: FeaturesProps) {
+  const liveDotRef = useRef<HTMLSpanElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [dotVisible, setDotVisible] = useState(false);
+
+  // Use GSAP to detect when the section is in view and show the dot
+  useGSAP(
+    () => {
+      if (!sectionRef.current) return;
+
+      // Create a scroll trigger that shows the dot when Features section enters
+      const trigger = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top center+=100",
+        onEnter: () => setDotVisible(true),
+        onLeaveBack: () => setDotVisible(false),
+      });
+
+      return () => {
+        trigger.kill();
+      };
+    },
+    { scope: sectionRef }
+  );
+
+  // Combined visibility: either from scroll trigger or from parent prop
+  const isDotVisible = dotVisible || showLiveDot;
+
   return (
-    <section id="features" className="w-full px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-20 lg:py-24 scroll-mt-20">
+    <section
+      ref={sectionRef}
+      id="features"
+      className="w-full px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-20 lg:py-24 scroll-mt-20"
+    >
       <div className="max-w-7xl mx-auto">
         {/* Feature 1: Live Transcription */}
         <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
@@ -359,7 +437,7 @@ export function Features() {
           <AnimatedSection delay={0} animation="slide-right" className="order-1">
             <div className="flex flex-col gap-4 sm:gap-6 lg:pr-4">
               <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
-                Live Transcription with
+                <LiveTitle dotRef={liveDotRef} showDot={isDotVisible} /> Transcription with
                 <br />
                 <span className="text-primary">Intelligent Insights</span>
               </h3>

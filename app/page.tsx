@@ -4,6 +4,7 @@ import { Features } from "@/components/Features";
 import { FAQ } from "@/components/FAQ";
 import { CTA } from "@/components/CTA";
 import { Footer } from "@/components/Footer";
+import { ChaosToOrderTransition } from "@/components/ChaosToOrderTransition";
 
 export default function Home() {
   return (
@@ -11,7 +12,9 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Features />
+        <ChaosToOrderTransition>
+          <Features />
+        </ChaosToOrderTransition>
         <FAQ />
         <CTA />
       </main>
