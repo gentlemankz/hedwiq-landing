@@ -42,7 +42,7 @@ export function CTA() {
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center text-center gap-6 md:gap-8 px-6 md:px-12 py-16 md:py-24">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight max-w-2xl">
-                Ready to transform your meetings to new level?
+                Ready to eliminate post-meeting busywork?
               </h2>
               <p className="text-lg md:text-xl text-white/90 max-w-xl">
                 Join teams who are already turning conversations into action in real-time.

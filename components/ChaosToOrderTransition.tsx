@@ -61,8 +61,9 @@ const PAIN_POINTS: {
 ];
 
 // Phase timings (constants outside component to avoid recreation)
-const CHAOS_END = 0.55;
-const MORPH_START = 0.55;
+// "Forgotten Information" fully appears at 0.62, chaos lines continue until 0.72
+const CHAOS_END = 0.72;
+const MORPH_START = 0.72;
 const MORPH_END = 1.0;
 
 // Easing functions (outside component for performance)
