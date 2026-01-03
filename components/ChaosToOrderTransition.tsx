@@ -436,11 +436,29 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
             className="absolute top-20 md:top-28 left-0 right-0 text-center px-4 z-20"
             style={{ opacity: 0, transform: "translateY(30px)" }}
           >
-            <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3">
-              The Meeting Chaos Problem
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-normal italic text-foreground mb-3">
+              Meetings{" "}
+              <span className="relative inline-block">
+                kill productivity
+                <svg
+                  className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-3 sm:h-4 text-red-500"
+                  viewBox="0 0 200 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M2 12C12 4 22 18 32 10C42 2 52 18 62 10C72 2 82 18 92 10C102 2 112 18 122 10C132 2 142 18 152 10C162 2 172 18 182 10C192 2 198 14 198 14"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-              Sound familiar? You&apos;re not alone.
+            <p className="text-md sm:text-lg md:text-xl text-muted-foreground">
+              and create chaos
             </p>
           </div>
 

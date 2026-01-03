@@ -28,7 +28,7 @@ export function CTA() {
           <div className="relative overflow-hidden rounded-2xl md:rounded-3xl">
             {/* Background Image */}
             <Image
-              src="/cta.png"
+              src="/cta_art4.jpg"
               alt="Get started with Luframe"
               fill
               className="object-cover"

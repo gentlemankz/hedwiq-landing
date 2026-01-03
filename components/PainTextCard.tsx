@@ -29,7 +29,7 @@ const PAIN_CONFIG: Record<
 > = {
   "meetings-block": {
     icon: Calendar,
-    title: "Meetings Block Real Work",
+    title: "Meetings block real work",
     description:
       "Back-to-back meetings leave no time for deep work. Context switching kills productivity.",
     stat: "23hrs/week",

@@ -45,7 +45,7 @@ export function FakeTranscriptionSearchUI({
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">
         <FileText className="size-3.5 text-muted-foreground" />
         <span className="text-xs font-medium text-muted-foreground">
-          Old Meeting Recording
+          Old meeting transcription
         </span>
         <span className="ml-auto text-[10px] text-muted-foreground flex items-center gap-1">
           <Clock className="size-3" />3 weeks ago
