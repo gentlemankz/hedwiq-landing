@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { FakeMeetingRoom } from "@/components/FakeMeetingRoom";
 import { RiskReversal } from "@/components/RiskReversal";
 import { TrustedBy } from "@/components/TrustedBy";
@@ -72,9 +73,9 @@ export function Hero() {
               {/* CTA Buttons */}
               <AnimatedSection delay={300}>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" className="rounded-full px-8" asChild>
-                    <a href={`${APP_URL}/sign-up`}>Start Free Trial</a>
-                  </Button>
+                  <a href={`${APP_URL}/sign-up`}>
+                    <ShimmerButton className="h-10 px-8 text-sm font-medium">Start Free Trial</ShimmerButton>
+                  </a>
                   <Button variant="outline" size="lg" className="rounded-full px-8" asChild>
                     <Link href="/#demo">Watch Demo</Link>
                   </Button>

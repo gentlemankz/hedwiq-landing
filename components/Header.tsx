@@ -105,7 +105,7 @@ function MobileMenu({
             <Button variant="outline" className="w-full" asChild>
               <a href={`${APP_URL}/sign-in`}>Sign In</a>
             </Button>
-            <Button className="w-full rounded-full" asChild>
+            <Button className="w-full rounded-full bg-blue-600 hover:bg-blue-700" asChild>
               <a href={`${APP_URL}/sign-up`}>Get Started</a>
             </Button>
           </div>
@@ -191,7 +191,7 @@ export function Header() {
               <Button variant="ghost" size="sm" asChild>
                 <a href={`${APP_URL}/sign-in`}>Sign In</a>
               </Button>
-              <Button size="sm" className="rounded-full" asChild>
+              <Button size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700" asChild>
                 <a href={`${APP_URL}/sign-up`}>Get Started</a>
               </Button>
             </div>
