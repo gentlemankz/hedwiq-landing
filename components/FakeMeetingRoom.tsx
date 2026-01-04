@@ -66,10 +66,10 @@ const ANIMATION_CONFIG = {
 
 // Map speaker names to participant IDs
 const SPEAKER_TO_PARTICIPANT: Record<string, string> = {
-  "Alex": "1",
-  "Ameila": "2",
-  "Alice": "3",
-  "Jordan": "4",
+  "Monica": "1",
+  "David": "2",
+  "Kai": "3",
+  "Alice": "4",
 };
 
 // ============================================================================
@@ -79,35 +79,39 @@ const SPEAKER_TO_PARTICIPANT: Record<string, string> = {
 const FAKE_PARTICIPANTS = [
   {
     id: "1",
-    name: "Alex",
+    name: "Monica",
     initials: "A",
     avatar: "/blue_avatar.webp",
+    video: "/video1.mp4",
     isMuted: false,
-    videoOn: false,
+    videoOn: true,
   },
   {
     id: "2",
-    name: "Ameila",
+    name: "David",
     initials: "AM",
     avatar: "/green_avatar.webp",
+    video: "/video2.mp4",
     isMuted: false,
-    videoOn: false,
+    videoOn: true,
   },
   {
     id: "3",
-    name: "Alice",
+    name: "Kai",
     initials: "AL",
     avatar: "/purple_avatar.webp",
+    video: "/video4.mp4",
     isMuted: false,
-    videoOn: false,
+    videoOn: true,
   },
   {
     id: "4",
-    name: "Jordan",
+    name: "Alice",
     initials: "J",
     avatar: "/orange_avatar.webp",
+    video: "/video3.mp4",
     isMuted: true,
-    videoOn: false,
+    videoOn: true,
   },
 ];
 
@@ -149,7 +153,7 @@ const FAKE_TRANSCRIPTIONS = [
   // Agenda Item 1: Campaign Performance Review (messages 0-2)
   {
     id: "1",
-    speaker: "Alex",
+    speaker: "Monica",
     initials: "A",
     avatar: "/blue_avatar.webp",
     text: "Let's review our Q4 campaign performance. The numbers are looking strong overall.",
@@ -158,7 +162,7 @@ const FAKE_TRANSCRIPTIONS = [
   },
   {
     id: "2",
-    speaker: "Ameila",
+    speaker: "David",
     initials: "AM",
     avatar: "/green_avatar.webp",
     text: "Email open rates increased by 23% and social engagement is up 15%.",
@@ -177,7 +181,7 @@ const FAKE_TRANSCRIPTIONS = [
   // Agenda Item 2: Target Audience Insights (messages 3-5)
   {
     id: "4",
-    speaker: "Alex",
+    speaker: "Monica",
     initials: "A",
     avatar: "/blue_avatar.webp",
     text: "Moving on to audience insights. What did our research reveal?",
@@ -186,7 +190,7 @@ const FAKE_TRANSCRIPTIONS = [
   },
   {
     id: "5",
-    speaker: "Jordan",
+    speaker: "Kai",
     initials: "J",
     avatar: "/orange_avatar.webp",
     text: "The 25-34 demographic responds best to short-form video under 60 seconds.",
@@ -195,7 +199,7 @@ const FAKE_TRANSCRIPTIONS = [
   },
   {
     id: "6",
-    speaker: "Ameila",
+    speaker: "David",
     initials: "AM",
     avatar: "/green_avatar.webp",
     text: "I propose we shift 30% of Q1 budget to TikTok and Reels content.",
@@ -205,7 +209,7 @@ const FAKE_TRANSCRIPTIONS = [
   // Agenda Item 3: Next Steps (messages 6-7)
   {
     id: "7",
-    speaker: "Jordan",
+    speaker: "Kai",
     initials: "J",
     avatar: "/orange_avatar.webp",
     text: "I'll handle micro-influencer outreach targeting 10k-50k follower accounts.",
@@ -214,7 +218,7 @@ const FAKE_TRANSCRIPTIONS = [
   },
   {
     id: "8",
-    speaker: "Alex",
+    speaker: "Monica",
     initials: "A",
     avatar: "/blue_avatar.webp",
     text: "Great progress! Let's reconvene Thursday to review all proposals.",
@@ -227,33 +231,162 @@ const FAKE_TRANSCRIPTIONS = [
 // Sub-components
 // ============================================================================
 
-function FakeParticipantTile({
-  participant,
-  isSpeaking,
+/**
+ * VideoAvatar component with lazy loading for optimized video performance
+ * Best practices from Next.js 16 docs:
+ * - autoPlay + muted + playsInline for cross-browser autoplay
+ * - loop for continuous playback
+ * - Lazy loading with IntersectionObserver
+ * - preload="none" initially, load when in viewport
+ */
+function VideoAvatar({
+  src,
+  fallbackImage,
+  name,
+  initials,
+  className,
 }: {
-  participant: (typeof FAKE_PARTICIPANTS)[0];
-  isSpeaking: boolean;
+  src: string;
+  fallbackImage: string;
+  name: string;
+  initials: string;
+  className?: string;
 }) {
-  return (
-    <div
-      className={cn(
-        "relative aspect-video rounded-lg bg-muted flex items-center justify-center overflow-hidden",
-        "border-2 transition-all duration-300",
-        isSpeaking
-          ? "border-primary ring-2 ring-primary/30"
-          : "border-transparent"
-      )}
-    >
-      {/* Avatar placeholder */}
-      <Avatar className="size-12 sm:size-16 md:size-20 border-2 border-border">
-        <AvatarImage src={participant.avatar} alt={participant.name} />
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [isInViewport, setIsInViewport] = useState(false);
+
+  // Lazy load video when container comes into viewport
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInViewport(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: "100px", // Start loading slightly before entering viewport
+        threshold: 0,
+      }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  // Play video when it's loaded and in viewport
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !isInViewport) return;
+
+    // Set source and attempt to load
+    video.src = src;
+    video.load();
+
+    const handleCanPlay = () => {
+      setIsLoaded(true);
+      // Attempt to play with error handling
+      video.play().catch((err) => {
+        console.warn("Video autoplay prevented:", err);
+      });
+    };
+
+    const handleError = () => {
+      setHasError(true);
+    };
+
+    video.addEventListener("canplay", handleCanPlay);
+    video.addEventListener("error", handleError);
+
+    return () => {
+      video.removeEventListener("canplay", handleCanPlay);
+      video.removeEventListener("error", handleError);
+    };
+  }, [isInViewport, src]);
+
+  // Show fallback avatar if video fails or isn't loaded yet
+  if (hasError) {
+    return (
+      <Avatar className={className}>
+        <AvatarImage src={fallbackImage} alt={name} />
         <AvatarFallback className="bg-primary text-primary-foreground text-sm sm:text-base md:text-lg font-medium">
-          {participant.initials}
+          {initials}
         </AvatarFallback>
       </Avatar>
+    );
+  }
+
+  return (
+    <div ref={containerRef} className={cn("relative", className)}>
+      {/* Fallback shown while loading */}
+      {!isLoaded && (
+        <Avatar className="absolute inset-0 w-full h-full">
+          <AvatarImage src={fallbackImage} alt={name} />
+          <AvatarFallback className="bg-primary text-primary-foreground text-sm sm:text-base md:text-lg font-medium">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+      )}
+
+      {/* Video element - hidden until loaded */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="none"
+        className={cn(
+          "w-full h-full object-cover rounded-full transition-opacity duration-300",
+          isLoaded ? "opacity-100" : "opacity-0"
+        )}
+        aria-label={`${name}'s video`}
+      />
+    </div>
+  );
+}
+
+function FakeParticipantTile({
+  participant,
+}: {
+  participant: (typeof FAKE_PARTICIPANTS)[0];
+}) {
+  const hasVideo = participant.videoOn && participant.video;
+
+  return (
+    <div
+      className="relative aspect-video rounded-lg bg-muted flex items-center justify-center overflow-hidden"
+    >
+      {/* Video or Avatar placeholder */}
+      {hasVideo ? (
+        <div className="absolute inset-0 w-full h-full">
+          <VideoAvatar
+            src={participant.video!}
+            fallbackImage={participant.avatar}
+            name={participant.name}
+            initials={participant.initials}
+            className="w-full h-full [&_video]:rounded-none"
+          />
+        </div>
+      ) : (
+        <Avatar className="size-12 sm:size-16 md:size-20 border-2 border-border">
+          <AvatarImage src={participant.avatar} alt={participant.name} />
+          <AvatarFallback className="bg-primary text-primary-foreground text-sm sm:text-base md:text-lg font-medium">
+            {participant.initials}
+          </AvatarFallback>
+        </Avatar>
+      )}
 
       {/* Participant name overlay */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 z-10">
         <div className="flex items-center gap-1.5">
           {participant.isMuted && (
             <MicOff className="size-3 text-red-400" />
@@ -264,26 +397,6 @@ function FakeParticipantTile({
         </div>
       </div>
 
-      {/* Speaking indicator pulse */}
-      {isSpeaking && (
-        <div className="absolute inset-0 border-2 border-primary rounded-lg animate-pulse" />
-      )}
-
-      {/* Audio waveform animation when speaking */}
-      {isSpeaking && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-end gap-0.5 h-4">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="w-1 bg-primary rounded-full animate-sound-wave"
-              style={{
-                animationDelay: `${i * 0.1}s`,
-                height: '100%',
-              }}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -374,13 +487,13 @@ function FakeAgendaItem({
   const isInProgress = item.status === "in_progress";
 
   return (
-    <div className={cn("flex", isFullScreen ? "gap-3 pb-5" : "gap-2 sm:gap-3 pb-3 sm:pb-4")}>
+    <div className={cn("flex", isFullScreen ? "gap-2 sm:gap-3 pb-3 sm:pb-5" : "gap-2 sm:gap-3 pb-3 sm:pb-4")}>
       {/* Status indicator + connector */}
-      <div className={cn("relative flex flex-col items-center shrink-0", isFullScreen ? "w-6" : "w-4 sm:w-5")}>
+      <div className={cn("relative flex flex-col items-center shrink-0", isFullScreen ? "w-5 sm:w-6" : "w-4 sm:w-5")}>
         <div
           className={cn(
             "relative z-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-500",
-            isFullScreen ? "size-6" : "size-4 sm:size-5",
+            isFullScreen ? "size-5 sm:size-6" : "size-4 sm:size-5",
             item.status === "pending" && "border-2 border-muted-foreground/40 bg-transparent",
             isInProgress && "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]",
             isCompleted && "bg-green-500"
@@ -390,7 +503,7 @@ function FakeAgendaItem({
             <div className="absolute inset-0 rounded-full bg-primary animate-ping opacity-30" />
           )}
           {isCompleted && (
-            <Check className={cn("text-white animate-scale-in", isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} strokeWidth={3} />
+            <Check className={cn("text-white animate-scale-in", isFullScreen ? "size-2.5 sm:size-3.5" : "size-2.5 sm:size-3")} strokeWidth={3} />
           )}
         </div>
 
@@ -409,15 +522,15 @@ function FakeAgendaItem({
       <div
         className={cn(
           "flex-1 min-w-0 rounded-md transition-all duration-300",
-          isCurrent && (isFullScreen ? "bg-primary/5 px-3 py-1.5 -my-1.5" : "bg-primary/5 px-2 sm:px-3 py-1 -my-1")
+          isCurrent && (isFullScreen ? "bg-primary/5 px-2 sm:px-3 py-1 sm:py-1.5 -my-1 sm:-my-1.5" : "bg-primary/5 px-2 sm:px-3 py-1 -my-1")
         )}
       >
-        <div className={cn(isFullScreen ? "space-y-1.5" : "space-y-0.5 sm:space-y-1")}>
-          <div className={cn("flex items-start", isFullScreen ? "gap-2" : "gap-1 sm:gap-2")}>
+        <div className={cn(isFullScreen ? "space-y-0.5 sm:space-y-1.5" : "space-y-0.5 sm:space-y-1")}>
+          <div className={cn("flex items-start", isFullScreen ? "gap-1.5 sm:gap-2" : "gap-1 sm:gap-2")}>
             <span
               className={cn(
                 "font-medium leading-tight transition-all duration-300",
-                isFullScreen ? "text-sm" : "text-xs sm:text-sm",
+                isFullScreen ? "text-[11px] sm:text-sm" : "text-xs sm:text-sm",
                 isCompleted && "text-muted-foreground line-through",
                 isCurrent && "text-primary font-semibold",
                 !isCompleted && !isCurrent && "text-foreground"
@@ -428,7 +541,7 @@ function FakeAgendaItem({
             {isCurrent && (
               <span className={cn(
                 "shrink-0 font-medium uppercase tracking-wide text-primary bg-primary/10 rounded animate-pulse",
-                isFullScreen ? "text-[10px] px-1.5 py-0.5" : "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5"
+                isFullScreen ? "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5" : "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5"
               )}>
                 Now
               </span>
@@ -436,7 +549,7 @@ function FakeAgendaItem({
             {isCompleted && (
               <span className={cn(
                 "shrink-0 font-medium uppercase tracking-wide text-green-600 bg-green-100 rounded animate-fade-in",
-                isFullScreen ? "text-[10px] px-1.5 py-0.5" : "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5"
+                isFullScreen ? "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5" : "text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5"
               )}>
                 Done
               </span>
@@ -445,14 +558,14 @@ function FakeAgendaItem({
 
           <div className={cn(
             "flex items-center text-muted-foreground",
-            isFullScreen ? "gap-3 text-xs" : "gap-2 sm:gap-3 text-[10px] sm:text-xs"
+            isFullScreen ? "gap-2 sm:gap-3 text-[10px] sm:text-xs" : "gap-2 sm:gap-3 text-[10px] sm:text-xs"
           )}>
-            <span className={cn("flex items-center", isFullScreen ? "gap-1" : "gap-0.5 sm:gap-1")}>
-              <Clock className={cn(isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} />
+            <span className={cn("flex items-center", isFullScreen ? "gap-0.5 sm:gap-1" : "gap-0.5 sm:gap-1")}>
+              <Clock className={cn(isFullScreen ? "size-2.5 sm:size-3.5" : "size-2.5 sm:size-3")} />
               {item.duration}
             </span>
-            <span className={cn("flex items-center", isFullScreen ? "gap-1" : "gap-0.5 sm:gap-1")}>
-              <User className={cn(isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} />
+            <span className={cn("flex items-center", isFullScreen ? "gap-0.5 sm:gap-1" : "gap-0.5 sm:gap-1")}>
+              <User className={cn(isFullScreen ? "size-2.5 sm:size-3.5" : "size-2.5 sm:size-3")} />
               {item.presenter}
             </span>
           </div>
@@ -539,24 +652,24 @@ function FakeTranscriptionMessage({
     <div
       className={cn(
         "flex transition-all duration-500",
-        isFullScreen ? "gap-3" : "gap-2 sm:gap-3",
+        isFullScreen ? "gap-2 sm:gap-3" : "gap-2 sm:gap-3",
         isNew ? "animate-fade-in-up" : ""
       )}
     >
-      <Avatar className={cn("shrink-0", isFullScreen ? "size-9" : "size-6 sm:size-8")}>
+      <Avatar className={cn("shrink-0", isFullScreen ? "size-6 sm:size-9" : "size-6 sm:size-8")}>
         <AvatarImage src={entry.avatar} alt={entry.speaker} />
-        <AvatarFallback className={cn(isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>{entry.initials}</AvatarFallback>
+        <AvatarFallback className={cn(isFullScreen ? "text-[10px] sm:text-xs" : "text-[10px] sm:text-xs")}>{entry.initials}</AvatarFallback>
       </Avatar>
-      <div className={cn("flex-1", isFullScreen ? "space-y-1" : "space-y-0.5 sm:space-y-1")}>
+      <div className={cn("flex-1", isFullScreen ? "space-y-0.5 sm:space-y-1" : "space-y-0.5 sm:space-y-1")}>
         <div className="flex items-center justify-between">
-          <p className={cn("font-medium leading-none", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>{entry.speaker}</p>
-          <span className={cn("text-muted-foreground", isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>{entry.timestamp}</span>
+          <p className={cn("font-medium leading-none", isFullScreen ? "text-xs sm:text-sm" : "text-xs sm:text-sm")}>{entry.speaker}</p>
+          <span className={cn("text-muted-foreground", isFullScreen ? "text-[10px] sm:text-xs" : "text-[10px] sm:text-xs")}>{entry.timestamp}</span>
         </div>
-        <p className={cn("text-foreground", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>{entry.text}</p>
+        <p className={cn("text-foreground", isFullScreen ? "text-[11px] sm:text-sm" : "text-xs sm:text-sm")}>{entry.text}</p>
         {entry.insights.length > 0 && showInsights && (
           <div className={cn(
             "flex flex-wrap animate-fade-in",
-            isFullScreen ? "gap-1.5 mt-2" : "gap-1 sm:gap-1.5 mt-1 sm:mt-2"
+            isFullScreen ? "gap-1 sm:gap-1.5 mt-1 sm:mt-2" : "gap-1 sm:gap-1.5 mt-1 sm:mt-2"
           )}>
             {entry.insights.map((insight, idx) => (
               <FakeInsightBadge
@@ -601,27 +714,27 @@ function FakeAgendaPanel({
       {/* Header */}
       <div className={cn(
         "border-b",
-        isFullScreen ? "p-4 space-y-3" : "p-2 sm:p-3 space-y-2 sm:space-y-3"
+        isFullScreen ? "p-2.5 sm:p-4 space-y-2 sm:space-y-3" : "p-2 sm:p-3 space-y-2 sm:space-y-3"
       )}>
         <div className="flex items-center justify-between">
-          <div className={cn("flex items-center", isFullScreen ? "gap-2" : "gap-1.5 sm:gap-2")}>
-            <ListTodo className={cn("text-muted-foreground", isFullScreen ? "size-5" : "size-3.5 sm:size-4")} />
-            <span className={cn("font-medium", isFullScreen ? "text-base" : "text-xs sm:text-sm")}>Agenda Progress</span>
+          <div className={cn("flex items-center", isFullScreen ? "gap-1.5 sm:gap-2" : "gap-1.5 sm:gap-2")}>
+            <ListTodo className={cn("text-muted-foreground", isFullScreen ? "size-4 sm:size-5" : "size-3.5 sm:size-4")} />
+            <span className={cn("font-medium", isFullScreen ? "text-sm sm:text-base" : "text-xs sm:text-sm")}>Agenda Progress</span>
           </div>
-          <span className={cn("text-muted-foreground", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>
+          <span className={cn("text-muted-foreground", isFullScreen ? "text-xs sm:text-sm" : "text-xs sm:text-sm")}>
             {completedItems}/{agendaItems.length}
           </span>
         </div>
-        <Progress value={progressPercentage} className={cn("transition-all duration-500", isFullScreen ? "h-2.5" : "h-1.5 sm:h-2")} />
-        <div className={cn("flex items-center gap-1 text-muted-foreground", isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>
-          <Clock className={cn(isFullScreen ? "size-3.5" : "size-2.5 sm:size-3")} />
+        <Progress value={progressPercentage} className={cn("transition-all duration-500", isFullScreen ? "h-2 sm:h-2.5" : "h-1.5 sm:h-2")} />
+        <div className={cn("flex items-center gap-1 text-muted-foreground", isFullScreen ? "text-[10px] sm:text-xs" : "text-[10px] sm:text-xs")}>
+          <Clock className={cn(isFullScreen ? "size-2.5 sm:size-3.5" : "size-2.5 sm:size-3")} />
           <span>Est. remaining: {remainingMinutes} min</span>
         </div>
       </div>
 
       {/* Items */}
       <ScrollArea className="flex-1 min-h-0">
-        <div className={cn(isFullScreen ? "p-4" : "p-2 sm:p-3")}>
+        <div className={cn(isFullScreen ? "p-2.5 sm:p-4" : "p-2 sm:p-3")}>
           {agendaItems.map((item, index) => (
             <FakeAgendaItem
               key={item.id}
@@ -638,13 +751,13 @@ function FakeAgendaPanel({
   );
 }
 
-function FakeMeetingHeader({ compact = false }: { compact?: boolean }) {
+function FakeMeetingHeader({ compact = false, isFullScreen = false }: { compact?: boolean; isFullScreen?: boolean }) {
   return (
-    <div className={cn("border-b", compact ? "p-2" : "p-3")}>
+    <div className={cn("border-b", compact ? "p-2" : isFullScreen ? "p-1.5 sm:p-3" : "p-3")}>
       {/* Meeting Image - using original app image */}
       <div className={cn(
         "relative w-full rounded-lg overflow-hidden bg-muted",
-        compact ? "aspect-[16/9] mb-2" : "aspect-[21/9] mb-3"
+        compact ? "aspect-[16/9] mb-2" : isFullScreen ? "aspect-[21/9] sm:aspect-[21/9] mb-1 sm:mb-3 max-h-[70px] sm:max-h-none" : "aspect-[21/9] mb-3"
       )}>
         <Image
           src="/image1.png"
@@ -657,13 +770,13 @@ function FakeMeetingHeader({ compact = false }: { compact?: boolean }) {
       {/* Meeting Info */}
       <h3 className={cn(
         "font-medium truncate",
-        compact ? "text-xs" : "text-sm"
+        compact ? "text-xs" : isFullScreen ? "text-[11px] sm:text-sm" : "text-sm"
       )}>
         Quarterly Digital Marketing Strategy...
       </h3>
       <p className={cn(
         "text-muted-foreground",
-        compact ? "text-[10px]" : "text-xs"
+        compact ? "text-[10px]" : isFullScreen ? "text-[9px] sm:text-xs" : "text-xs"
       )}>
         20.12.2025 • 02:35
       </p>
@@ -761,7 +874,7 @@ function FakeTranscriptionPanel({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Meeting Header with Image - compact in sidebar, expanded on mobile full screen */}
-      <FakeMeetingHeader compact={!isFullScreen} />
+      <FakeMeetingHeader compact={!isFullScreen} isFullScreen={isFullScreen} />
 
       {/* Transcriptions - custom scroll container instead of ScrollArea to prevent page scroll */}
       <div
@@ -771,7 +884,7 @@ function FakeTranscriptionPanel({
       >
         <div className={cn(
           "space-y-3",
-          isFullScreen ? "p-3 space-y-4" : "p-2 sm:p-3 sm:space-y-4"
+          isFullScreen ? "p-2 sm:p-3 space-y-2.5 sm:space-y-4" : "p-2 sm:p-3 sm:space-y-4"
         )}>
           {visibleTranscriptions.map((entry, index) => (
             <FakeTranscriptionMessage
@@ -787,20 +900,20 @@ function FakeTranscriptionPanel({
           {animationState.typingIndicator && (
             <div className={cn(
               "flex opacity-60 animate-fade-in",
-              isFullScreen ? "gap-3" : "gap-2 sm:gap-3"
+              isFullScreen ? "gap-2 sm:gap-3" : "gap-2 sm:gap-3"
             )}>
-              <Avatar className={cn("shrink-0", isFullScreen ? "size-9" : "size-6 sm:size-8")}>
+              <Avatar className={cn("shrink-0", isFullScreen ? "size-6 sm:size-9" : "size-6 sm:size-8")}>
                 <AvatarImage src={animationState.typingIndicator.avatar} alt={animationState.typingIndicator.speaker} />
-                <AvatarFallback className={cn(isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>{animationState.typingIndicator.initials}</AvatarFallback>
+                <AvatarFallback className={cn(isFullScreen ? "text-[10px] sm:text-xs" : "text-[10px] sm:text-xs")}>{animationState.typingIndicator.initials}</AvatarFallback>
               </Avatar>
-              <div className={cn("flex-1", isFullScreen ? "space-y-1" : "space-y-0.5 sm:space-y-1")}>
-                <p className={cn("font-medium leading-none", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>
+              <div className={cn("flex-1", isFullScreen ? "space-y-0.5 sm:space-y-1" : "space-y-0.5 sm:space-y-1")}>
+                <p className={cn("font-medium leading-none", isFullScreen ? "text-xs sm:text-sm" : "text-xs sm:text-sm")}>
                   {animationState.typingIndicator.speaker}
-                  <span className={cn("ml-2 text-muted-foreground italic", isFullScreen ? "text-xs" : "text-[10px] sm:text-xs")}>
+                  <span className={cn("ml-2 text-muted-foreground italic", isFullScreen ? "text-[10px] sm:text-xs" : "text-[10px] sm:text-xs")}>
                     typing...
                   </span>
                 </p>
-                <p className={cn("text-foreground italic", isFullScreen ? "text-sm" : "text-xs sm:text-sm")}>
+                <p className={cn("text-foreground italic", isFullScreen ? "text-[11px] sm:text-sm" : "text-xs sm:text-sm")}>
                   <TypingText text={animationState.typingIndicator.text} />
                 </p>
               </div>
@@ -849,21 +962,21 @@ function MacWindowFrame({ children }: { children: React.ReactNode }) {
       {/* macOS Title Bar */}
       <div className="flex items-center h-10 sm:h-11 px-3 sm:px-4 bg-muted/50 border-b border-border shrink-0">
         {/* Traffic Light Buttons */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <div className="size-2.5 sm:size-3 rounded-full bg-[#ff5f57]" />
           <div className="size-2.5 sm:size-3 rounded-full bg-[#febc2e]" />
           <div className="size-2.5 sm:size-3 rounded-full bg-[#28c840]" />
         </div>
 
         {/* Window Title */}
-        <div className="flex-1 flex items-center justify-center">
-          <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">
+        <div className="flex-1 flex items-center justify-center min-w-0 ml-3 sm:ml-4">
+          <span className="text-[9px] sm:text-xs text-muted-foreground font-medium truncate">
             Luframe — Quarterly Digital Marketing Strategy
           </span>
         </div>
 
         {/* Spacer for balance */}
-        <div className="w-12 sm:w-14" />
+        <div className="w-10 sm:w-14 shrink-0" />
       </div>
 
       {/* Window Content */}
@@ -1141,7 +1254,6 @@ export function FakeMeetingRoom() {
   const {
     transcriptionState,
     agendaItems,
-    speakingParticipantId,
     elapsedMinutes,
   } = useMeetingAnimation(isInView);
 
@@ -1175,7 +1287,6 @@ export function FakeMeetingRoom() {
                       <FakeParticipantTile
                         key={participant.id}
                         participant={participant}
-                        isSpeaking={participant.id === speakingParticipantId}
                       />
                     ))}
                   </div>
@@ -1221,7 +1332,6 @@ export function FakeMeetingRoom() {
                   <FakeParticipantTile
                     key={participant.id}
                     participant={participant}
-                    isSpeaking={participant.id === speakingParticipantId}
                   />
                 ))}
               </div>

@@ -18,7 +18,7 @@ export function TrustedBy() {
         <AnimatedSection delay={0}>
           <div className="relative flex flex-col items-center gap-6 pb-8 border-b border-border">
             <p className="text-sm text-muted-foreground uppercase tracking-wider">
-              Trusted by teams at
+              Trusted by
             </p>
             <div className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
               {trustedCompanies.map((company, index) => (
