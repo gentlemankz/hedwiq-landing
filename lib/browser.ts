@@ -4,6 +4,8 @@
  * filter: blur(), backdrop-filter, and complex SVG animations.
  */
 
+import { useSyncExternalStore } from "react";
+
 /**
  * Check if the current browser is Safari (including iOS Safari).
  * Returns false during SSR.
@@ -56,4 +58,40 @@ export function getCachedIsSafari(): boolean {
     cachedIsSafari = isSafari();
   }
   return cachedIsSafari;
+}
+
+/**
+ * React hook for Safari detection.
+ * Uses useSyncExternalStore for proper SSR hydration without cascading renders.
+ * Use this in React components for Safari-specific optimizations.
+ */
+// Store for Safari detection state
+const safariStore = {
+  getSnapshot: () => getCachedIsSafari(),
+  getServerSnapshot: () => false, // Always false on server
+  subscribe: () => () => {}, // No-op since browser UA doesn't change
+};
+
+export function useSafariDetection(): boolean {
+  return useSyncExternalStore(
+    safariStore.subscribe,
+    safariStore.getSnapshot,
+    safariStore.getServerSnapshot
+  );
+}
+
+/**
+ * Check if the device is likely low-powered (mobile/tablet).
+ * Useful for reducing video quality or disabling autoplay on constrained devices.
+ */
+export function isLowPowerDevice(): boolean {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
+    return false;
+  }
+
+  // Check for mobile/tablet via touch and screen size
+  const isTouchDevice = navigator.maxTouchPoints > 0;
+  const isSmallScreen = window.innerWidth < 768;
+
+  return isTouchDevice && isSmallScreen;
 }

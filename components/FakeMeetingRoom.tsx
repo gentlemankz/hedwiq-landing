@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useInView } from "@/lib/useInView";
+import { useSafariDetection } from "@/lib/browser";
 import {
   Mic,
   MicOff,
@@ -29,6 +30,7 @@ import {
   ClipboardList,
   Users,
   MessageSquareText,
+  Play,
 } from "lucide-react";
 
 // ============================================================================
@@ -232,12 +234,19 @@ const FAKE_TRANSCRIPTIONS = [
 // ============================================================================
 
 /**
- * VideoAvatar component with lazy loading for optimized video performance
- * Best practices from Next.js 16 docs:
- * - autoPlay + muted + playsInline for cross-browser autoplay
- * - loop for continuous playback
- * - Lazy loading with IntersectionObserver
- * - preload="none" initially, load when in viewport
+ * VideoAvatar component with Safari/iOS optimizations for reliable autoplay.
+ *
+ * Safari/iOS Best Practices (2025):
+ * - Videos must have NO audio track (removed via ffmpeg -an)
+ * - Use autoPlay + muted + playsInline + loop attributes
+ * - Add webkit-playsinline for older Safari versions
+ * - Use preload="metadata" (not "none") for Safari compatibility
+ * - Add #t=0.001 to src for iOS first-frame display
+ * - Provide poster image for immediate visual feedback
+ * - Handle play() promise rejection with fallback play button
+ * - Use loadeddata event instead of canplay for Safari
+ *
+ * @see https://webkit.org/blog/6784/new-video-policies-for-ios/
  */
 function VideoAvatar({
   src,
@@ -257,6 +266,11 @@ function VideoAvatar({
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isInViewport, setIsInViewport] = useState(false);
+  const [needsManualPlay, setNeedsManualPlay] = useState(false);
+  const playAttemptedRef = useRef(false);
+
+  // Use Safari detection hook for browser-specific optimizations
+  const isSafari = useSafariDetection();
 
   // Lazy load video when container comes into viewport
   useEffect(() => {
@@ -282,37 +296,96 @@ function VideoAvatar({
     return () => observer.disconnect();
   }, []);
 
-  // Play video when it's loaded and in viewport
+  // Attempt to play video with proper error handling for Safari
+  const attemptPlay = useCallback(async (video: HTMLVideoElement) => {
+    if (playAttemptedRef.current) return;
+    playAttemptedRef.current = true;
+
+    try {
+      // Ensure video is ready before attempting play
+      if (video.readyState >= 2) {
+        await video.play();
+        setNeedsManualPlay(false);
+      } else {
+        // Wait for enough data to play
+        const playWhenReady = async () => {
+          try {
+            await video.play();
+            setNeedsManualPlay(false);
+          } catch {
+            setNeedsManualPlay(true);
+          }
+          video.removeEventListener("canplay", playWhenReady);
+        };
+        video.addEventListener("canplay", playWhenReady);
+      }
+    } catch (err) {
+      // Autoplay was prevented - show manual play button
+      console.warn("Video autoplay prevented:", err);
+      setNeedsManualPlay(true);
+    }
+  }, []);
+
+  // Handle video loading and playback
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !isInViewport) return;
 
-    // Set source and attempt to load
-    video.src = src;
-    video.load();
+    playAttemptedRef.current = false;
 
-    const handleCanPlay = () => {
+    const handleLoadedData = () => {
       setIsLoaded(true);
-      // Attempt to play with error handling
-      video.play().catch((err) => {
-        console.warn("Video autoplay prevented:", err);
-      });
+      attemptPlay(video);
     };
 
     const handleError = () => {
       setHasError(true);
     };
 
-    video.addEventListener("canplay", handleCanPlay);
+    // For Safari: also try playing when metadata is loaded
+    const handleLoadedMetadata = () => {
+      if (isSafari) {
+        attemptPlay(video);
+      }
+    };
+
+    // Handle cached video that's already loaded - use microtask to avoid sync setState
+    const handleCachedVideo = () => {
+      if (video.readyState >= 2) {
+        setIsLoaded(true);
+        attemptPlay(video);
+      }
+    };
+
+    video.addEventListener("loadeddata", handleLoadedData);
+    video.addEventListener("loadedmetadata", handleLoadedMetadata);
     video.addEventListener("error", handleError);
 
+    // Schedule cached video check in a microtask to avoid synchronous setState in effect
+    queueMicrotask(handleCachedVideo);
+
     return () => {
-      video.removeEventListener("canplay", handleCanPlay);
+      video.removeEventListener("loadeddata", handleLoadedData);
+      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
       video.removeEventListener("error", handleError);
     };
-  }, [isInViewport, src]);
+  }, [isInViewport, attemptPlay, isSafari]);
 
-  // Show fallback avatar if video fails or isn't loaded yet
+  // Handle manual play button click
+  const handleManualPlay = useCallback(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.play()
+        .then(() => {
+          setNeedsManualPlay(false);
+        })
+        .catch((err) => {
+          console.warn("Manual play failed:", err);
+        });
+    }
+  }, []);
+
+  // Show fallback avatar if video fails
   if (hasError) {
     return (
       <Avatar className={className}>
@@ -323,6 +396,12 @@ function VideoAvatar({
       </Avatar>
     );
   }
+
+  // Build video src with Safari first-frame hack (#t=0.001)
+  // This makes iOS Safari display the first frame instead of black screen
+  const videoSrc = isInViewport
+    ? (isSafari ? `${src}#t=0.001` : src)
+    : undefined;
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
@@ -336,20 +415,38 @@ function VideoAvatar({
         </Avatar>
       )}
 
-      {/* Video element - hidden until loaded */}
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="none"
-        className={cn(
-          "w-full h-full object-cover rounded-full transition-opacity duration-300",
-          isLoaded ? "opacity-100" : "opacity-0"
-        )}
-        aria-label={`${name}'s video`}
-      />
+      {/* Video element with all Safari-required attributes */}
+      {isInViewport && (
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          autoPlay
+          muted
+          loop
+          playsInline
+          webkit-playsinline=""
+          preload="metadata" // Better than "none" for Safari compatibility
+          poster={fallbackImage} // Shows immediately on iOS instead of black
+          className={cn(
+            "w-full h-full object-cover rounded-full transition-opacity duration-300",
+            isLoaded ? "opacity-100" : "opacity-0"
+          )}
+          aria-label={`${name}'s video`}
+        />
+      )}
+
+      {/* Manual play button for Safari when autoplay fails */}
+      {needsManualPlay && isLoaded && (
+        <button
+          onClick={handleManualPlay}
+          className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full cursor-pointer transition-colors hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          aria-label={`Play ${name}'s video`}
+        >
+          <div className="flex items-center justify-center size-10 sm:size-12 bg-white/90 rounded-full shadow-lg">
+            <Play className="size-5 sm:size-6 text-primary ml-0.5" fill="currentColor" />
+          </div>
+        </button>
+      )}
     </div>
   );
 }
