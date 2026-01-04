@@ -1,4 +1,4 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.luframe.com";
 
 interface OrganizationSchema {
   "@context": "https://schema.org";

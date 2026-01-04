@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Mail } from "lucide-react";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.luframe.com";
 
 export const metadata: Metadata = {
   title: "Contact",

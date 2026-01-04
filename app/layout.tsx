@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.luframe.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

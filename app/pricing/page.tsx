@@ -4,7 +4,7 @@ import { Pricing } from "@/components/Pricing";
 import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.luframe.com";
 
 export const metadata: Metadata = {
   title: "Pricing",

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.luframe.com";
 
 export const metadata: Metadata = {
   title: "About",
