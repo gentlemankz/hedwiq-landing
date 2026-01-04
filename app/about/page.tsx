@@ -3,10 +3,22 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+
 export const metadata: Metadata = {
-  title: "About | Luframe",
+  title: "About",
   description:
-    "Learn about Luframe's mission to transform meetings into real-time action.",
+    "Learn about Luframe's mission to transform meetings into real-time action. We're building an AI-native platform that eliminates post-meeting chaos.",
+  alternates: {
+    canonical: `${siteUrl}/about`,
+  },
+  openGraph: {
+    title: "About | Luframe",
+    description:
+      "Learn about Luframe's mission to transform meetings into real-time action.",
+    url: `${siteUrl}/about`,
+    type: "website",
+  },
 };
 
 export default function AboutPage() {

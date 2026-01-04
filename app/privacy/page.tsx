@@ -3,10 +3,19 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+
 export const metadata: Metadata = {
-  title: "Privacy Policy | Luframe",
+  title: "Privacy Policy",
   description:
-    "Learn how Luframe collects, uses, and protects your personal information.",
+    "Learn how Luframe collects, uses, and protects your personal information. Your privacy matters to us.",
+  alternates: {
+    canonical: `${siteUrl}/privacy`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function PrivacyPage() {

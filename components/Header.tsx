@@ -162,11 +162,10 @@ export function Header() {
             >
               <Image
                 src="/luframe-logo.svg"
-                alt=""
+                alt="Luframe logo"
                 width={30}
                 height={30}
                 priority
-                aria-hidden="true"
               />
               <span className="text-md font-semibold text-foreground">
                 Luframe

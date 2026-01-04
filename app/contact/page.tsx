@@ -3,9 +3,21 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Mail } from "lucide-react";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+
 export const metadata: Metadata = {
-  title: "Contact | Luframe",
-  description: "Get in touch with the Luframe team.",
+  title: "Contact",
+  description:
+    "Get in touch with the Luframe team. We'd love to hear your questions, feedback, or partnership opportunities.",
+  alternates: {
+    canonical: `${siteUrl}/contact`,
+  },
+  openGraph: {
+    title: "Contact | Luframe",
+    description: "Get in touch with the Luframe team.",
+    url: `${siteUrl}/contact`,
+    type: "website",
+  },
 };
 
 export default function ContactPage() {

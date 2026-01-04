@@ -47,12 +47,39 @@ const FAQ_ITEMS: FAQItem[] = [
 ];
 
 // ============================================================================
+// FAQ Structured Data (JSON-LD)
+// ============================================================================
+
+function FAQStructuredData() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ_ITEMS.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// ============================================================================
 // FAQ Component
 // ============================================================================
 
 export function FAQ() {
   return (
     <section id="faq" className="w-full px-6 md:px-12 lg:px-24 py-16 md:py-24 bg-muted/30 scroll-mt-20">
+      <FAQStructuredData />
       <div className="max-w-3xl mx-auto">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center gap-4 mb-12 md:mb-16">

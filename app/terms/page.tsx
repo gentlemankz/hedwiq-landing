@@ -3,10 +3,19 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://luframe.com";
+
 export const metadata: Metadata = {
-  title: "Terms of Service | Luframe",
+  title: "Terms of Service",
   description:
     "Read the terms and conditions for using Luframe's meeting platform and services.",
+  alternates: {
+    canonical: `${siteUrl}/terms`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function TermsPage() {
