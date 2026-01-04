@@ -58,6 +58,14 @@ export const metadata: Metadata = {
     title: "Luframe | Agentic Meeting Platform for Real-Time Execution",
     description:
       "Transform live meetings into real-time action with AI-powered transcription, automatic insight detection, agenda tracking, and instant drafts.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Luframe - Agentic Meeting Platform for Real-Time Execution",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -65,6 +73,7 @@ export const metadata: Metadata = {
     description:
       "Transform live meetings into real-time action with AI-powered transcription, automatic insight detection, agenda tracking, and instant drafts.",
     creator: "@luframe",
+    images: ["/og-image.png"],
   },
   alternates: {
     canonical: siteUrl,
