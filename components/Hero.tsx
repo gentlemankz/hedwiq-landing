@@ -29,8 +29,8 @@ const APP_URL = getAppUrl();
 export function Hero() {
   return (
     <>
-      <section className="w-full px-4 sm:px-6 md:px-12 lg:px-16 py-16 md:py-10">
-        <div className="max-w-[1400px] mx-auto">
+      <section className="w-full py-16 md:py-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
           <div className="flex flex-col gap-12 lg:gap-16">
             {/* Text content - Centered */}
             <div className="flex flex-col items-center text-center gap-8">

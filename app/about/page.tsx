@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { PageLines } from "@/components/LineContainer";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.luframe.com";
 
@@ -23,10 +24,13 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-6 md:px-12">
+    <div className="relative min-h-screen">
+      <PageLines />
+      <div className="relative z-10">
+        <Header />
+        <main className="py-16 md:py-24">
+          <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
+            <div className="max-w-4xl mx-auto">
           <div className="mb-12">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
               About Luframe
@@ -145,10 +149,12 @@ export default function AboutPage() {
                 Explore Features
               </Link>
             </section>
+            </div>
           </div>
-        </div>
-      </main>
-      <Footer />
+          </div>
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }

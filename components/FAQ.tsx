@@ -78,9 +78,10 @@ function FAQStructuredData() {
 
 export function FAQ() {
   return (
-    <section id="faq" className="w-full px-6 md:px-12 lg:px-24 py-16 md:py-24 bg-muted/30 scroll-mt-20">
+    <section id="faq" className="w-full py-16 md:py-24 bg-muted/30 scroll-mt-20">
       <FAQStructuredData />
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
+        <div className="max-w-3xl mx-auto">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center gap-4 mb-12 md:mb-16">
           <AnimatedSection delay={0}>
@@ -119,6 +120,7 @@ export function FAQ() {
             ))}
           </Accordion>
         </AnimatedSection>
+        </div>
       </div>
     </section>
   );

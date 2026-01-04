@@ -446,3 +446,71 @@ html.lenis, html.lenis body {
 .animate-progress-dot-grow {
   animation: progress-dot-grow 0.3s ease-out forwards;
 }
+
+/* ============================================================================
+   Line Container / Page Lines Styling
+   ============================================================================ */
+
+/* Line container wrapper - ensures content is positioned correctly with the lines */
+.line-container-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Subtle gradient fade at top and bottom of page lines */
+.page-lines-fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, var(--background), transparent);
+  pointer-events: none;
+}
+
+.page-lines-fade-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to top, var(--background), transparent);
+  pointer-events: none;
+}
+
+/* Intersection dots where horizontal and vertical lines meet */
+.line-intersection-dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--border);
+  transform: translate(-50%, -50%);
+}
+
+/* Section with line accents */
+.line-section-accent {
+  position: relative;
+}
+
+.line-section-accent::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 20px;
+  height: 1px;
+  background-color: var(--border);
+}
+
+/* Grid line pattern overlay (optional decorative element) */
+.grid-lines-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 100px 100px;
+  opacity: 0.3;
+  pointer-events: none;
+}

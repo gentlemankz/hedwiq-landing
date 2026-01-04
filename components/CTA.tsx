@@ -22,8 +22,8 @@ const APP_URL = getAppUrl();
 
 export function CTA() {
   return (
-    <section className="w-full px-6 md:px-12 lg:px-24 py-16 md:py-24">
-      <div className="max-w-5xl mx-auto">
+    <section className="w-full py-16 md:py-24">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
         <AnimatedSection delay={0}>
           <div className="relative overflow-hidden rounded-2xl md:rounded-3xl">
             {/* Background Image */}

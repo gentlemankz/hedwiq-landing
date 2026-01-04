@@ -87,7 +87,7 @@ function NoteTakerFeatureSection() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-12 md:mt-20 lg:mt-28">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
       {/* Text Description - First on mobile/tablet */}
       <AnimatedSection delay={300} animation="slide-right" className="order-1 lg:order-2">
         <div className="flex flex-col gap-4 sm:gap-6 lg:pl-4">
@@ -149,7 +149,7 @@ function NoteTakerFeatureSection() {
 
 function EmailDraftFeatureSection() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-12 md:mt-20 lg:mt-28">
+    <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
       {/* Text Description - Always first on mobile/tablet */}
       <AnimatedSection delay={300} animation="slide-right" className="order-1">
         <div className="flex flex-col gap-4 sm:gap-6 lg:pr-4">
@@ -250,7 +250,7 @@ function EmailDraftFeatureSection() {
 
 function AgendaFeatureSection() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto mt-12 md:mt-20 lg:mt-28">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
       {/* Text Description - First on mobile/tablet */}
       <AnimatedSection delay={300} animation="slide-right" className="order-1 lg:order-2">
         <div className="flex flex-col gap-4 sm:gap-6 lg:pl-4">
@@ -407,11 +407,12 @@ export function Features({ showLiveDot = false }: FeaturesProps) {
     <section
       ref={sectionRef}
       id="features"
-      className="w-full px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-20 lg:py-24 scroll-mt-20"
+      className="w-full py-12 md:py-20 lg:py-24 scroll-mt-20"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
         {/* Feature 1: Live Transcription */}
-        <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
+        <div className="pb-12 md:pb-16 lg:pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
           {/* Text Description - First on mobile/tablet (already in correct DOM order) */}
           <AnimatedSection delay={0} animation="slide-right" className="order-1">
             <div className="flex flex-col gap-4 sm:gap-6 lg:pr-4">
@@ -484,15 +485,22 @@ export function Features({ showLiveDot = false }: FeaturesProps) {
             </div>
           </AnimatedSection>
         </div>
+        </div>
 
         {/* Feature 2: Advanced Note Taker (with subfeature switcher) */}
-        <NoteTakerFeatureSection />
+        <div className="border-t border-border pt-12 md:pt-16 lg:pt-20 pb-12 md:pb-16 lg:pb-20">
+          <NoteTakerFeatureSection />
+        </div>
 
         {/* Feature 3: Real-Time Email Drafts */}
-        <EmailDraftFeatureSection />
+        <div className="border-t border-border pt-12 md:pt-16 lg:pt-20 pb-12 md:pb-16 lg:pb-20">
+          <EmailDraftFeatureSection />
+        </div>
 
         {/* Feature 4: Smart Agenda */}
-        <AgendaFeatureSection />
+        <div className="border-t border-border pt-12 md:pt-16 lg:pt-20 pb-12 md:pb-16 lg:pb-20">
+          <AgendaFeatureSection />
+        </div>
       </div>
     </section>
   );

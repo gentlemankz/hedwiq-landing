@@ -148,7 +148,7 @@ export function Header() {
             : "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
         )}
       >
-        <div className="w-full px-6 md:px-12 lg:px-24">
+        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
           <nav
             className="flex h-16 items-center justify-between"
             role="navigation"

@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Pricing } from "@/components/Pricing";
 import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
+import { PageLines } from "@/components/LineContainer";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.luframe.com";
 
@@ -24,13 +25,16 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <Pricing />
-        <FAQ />
-      </main>
-      <Footer />
+    <div className="relative min-h-screen">
+      <PageLines />
+      <div className="relative z-10">
+        <Header />
+        <main>
+          <Pricing />
+          <FAQ />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }
