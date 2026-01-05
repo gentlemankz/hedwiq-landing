@@ -102,9 +102,6 @@ export function PageLines({ className }: PageLinesProps) {
 
         {/* Right boundary line */}
         <div className="absolute right-6 md:right-12 lg:right-16 top-0 bottom-0 w-px bg-border" />
-
-        {/* Center line (optional - subtle) */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border/20 hidden lg:block" />
       </div>
     </div>
   );

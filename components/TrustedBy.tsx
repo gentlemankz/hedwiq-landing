@@ -1,11 +1,21 @@
 "use client";
 
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { cn } from "@/lib/utils";
+
+// ============================================================================
+// Constants - extracted magic numbers for maintainability
+// ============================================================================
+const ANIMATION = {
+  GROW_PHASE_END: 0.75,      // Line grows during first 75% of scroll
+  MAX_LINE_HEIGHT: 150,      // Maximum line height in pixels
+  BOUNCE_THRESHOLD: 0.05,    // Chevron bounces when progress < 5%
+  ANCHOR_OFFSET: 16,         // Offset from anchor to line start
+  FALLBACK_SCROLL_DISTANCE: 300, // Fallback end if chaos section not found
+} as const;
 
 const trustedCompanies = [
   { name: "Amplitude", logo: "/Amplitude_logo.svg", width: 120, height: 28, isWordmark: true },
@@ -14,73 +24,98 @@ const trustedCompanies = [
   { name: "Supabase", logo: "/supabase-logo-wordmark--light.svg", width: 120, height: 28, isWordmark: true },
 ];
 
+// ============================================================================
+// TrustedBy - Main component with scroll line animation
+// ============================================================================
 export function TrustedBy() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
   const lineContainerRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLDivElement>(null);
+
+  // Use refs instead of state for position - avoids re-renders on scroll
+  const anchorPosRef = useRef({ x: 0, y: 0 });
   const progressRef = useRef(0);
   const rafIdRef = useRef<number | null>(null);
+  const positionRafIdRef = useRef<number | null>(null);
+  const isMeasuredRef = useRef(false);
+  const isMountedRef = useRef(true);
 
-  // Track anchor position for fixed overlay
-  const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
+  // Update anchor position imperatively (no React state)
+  const updateAnchorPosition = useCallback(() => {
+    if (!anchorRef.current || !lineContainerRef.current || !isMountedRef.current) return;
 
-  // Update anchor position
-  useEffect(() => {
-    const updateAnchorPos = () => {
-      if (anchorRef.current) {
-        const rect = anchorRef.current.getBoundingClientRect();
-        setAnchorPos({
-          x: rect.left + rect.width / 2,
-          y: rect.bottom
-        });
-      }
-    };
+    const rect = anchorRef.current.getBoundingClientRect();
+    const newX = rect.left + rect.width / 2;
+    const newY = rect.bottom;
 
-    updateAnchorPos();
-    window.addEventListener('scroll', updateAnchorPos);
-    window.addEventListener('resize', updateAnchorPos);
+    // Only update DOM if position changed significantly (avoid micro-updates)
+    if (
+      Math.abs(anchorPosRef.current.x - newX) > 0.5 ||
+      Math.abs(anchorPosRef.current.y - newY) > 0.5
+    ) {
+      anchorPosRef.current = { x: newX, y: newY };
+      lineContainerRef.current.style.left = `${newX}px`;
+      lineContainerRef.current.style.top = `${newY + ANIMATION.ANCHOR_OFFSET}px`;
+    }
 
-    return () => {
-      window.removeEventListener('scroll', updateAnchorPos);
-      window.removeEventListener('resize', updateAnchorPos);
-    };
-  }, []);
-
-  // Direct DOM update for performance
-  const updateDOM = useCallback(() => {
-    const progress = progressRef.current;
-
-    if (lineRef.current && chevronRef.current && lineContainerRef.current) {
-      // Line grows during first 75% of scroll, then fades
-      if (progress < 0.75) {
-        const growProgress = progress / 0.75;
-        const lineHeight = Math.min(growProgress * 150, 150); // Max 150px line
-        lineRef.current.style.height = `${lineHeight}px`;
-        lineRef.current.style.opacity = "1";
-        chevronRef.current.style.opacity = "1";
-        lineContainerRef.current.style.opacity = "1";
-      } else {
-        // Fade out during last 25%
-        const fadeProgress = (progress - 0.75) / 0.25;
-        lineRef.current.style.height = "150px";
-        const opacity = 1 - fadeProgress;
-        lineRef.current.style.opacity = String(opacity);
-        chevronRef.current.style.opacity = String(opacity);
-        lineContainerRef.current.style.opacity = String(opacity);
-      }
-
-      // Chevron bounces only when progress is very low
-      const shouldBounce = progress < 0.05;
-      chevronRef.current.className = cn(
-        "text-muted-foreground transition-transform duration-300",
-        shouldBounce && "animate-bounce"
-      );
+    // Mark as measured and show the indicator
+    if (!isMeasuredRef.current && lineContainerRef.current) {
+      isMeasuredRef.current = true;
+      lineContainerRef.current.style.visibility = 'visible';
     }
   }, []);
 
-  // Throttled update via RAF
+  // Throttled position update via RAF
+  const schedulePositionUpdate = useCallback(() => {
+    if (positionRafIdRef.current === null) {
+      positionRafIdRef.current = requestAnimationFrame(() => {
+        positionRafIdRef.current = null;
+        updateAnchorPosition();
+      });
+    }
+  }, [updateAnchorPosition]);
+
+  // Direct DOM update for animation (no React re-renders)
+  const updateDOM = useCallback(() => {
+    const progress = progressRef.current;
+
+    if (!lineRef.current || !chevronRef.current || !lineContainerRef.current) return;
+
+    const { GROW_PHASE_END, MAX_LINE_HEIGHT, BOUNCE_THRESHOLD } = ANIMATION;
+
+    // Hide everything when progress is essentially 0
+    if (progress < 0.001) {
+      lineContainerRef.current.style.opacity = "0";
+      return;
+    }
+
+    // Line grows during first 75% of scroll, then fades
+    if (progress < GROW_PHASE_END) {
+      const growProgress = progress / GROW_PHASE_END;
+      const lineHeight = Math.min(growProgress * MAX_LINE_HEIGHT, MAX_LINE_HEIGHT);
+      lineRef.current.style.height = `${lineHeight}px`;
+      lineRef.current.style.opacity = "1";
+      chevronRef.current.style.opacity = "1";
+      lineContainerRef.current.style.opacity = "1";
+    } else {
+      // Fade out during last 25%
+      const fadeProgress = (progress - GROW_PHASE_END) / (1 - GROW_PHASE_END);
+      lineRef.current.style.height = `${MAX_LINE_HEIGHT}px`;
+      const opacity = String(1 - fadeProgress);
+      lineRef.current.style.opacity = opacity;
+      chevronRef.current.style.opacity = opacity;
+      lineContainerRef.current.style.opacity = opacity;
+    }
+
+    // Chevron bounces only when progress is very low (but visible)
+    // Use classList.toggle instead of rewriting className to avoid style recalculation
+    const shouldBounce = progress < BOUNCE_THRESHOLD;
+    chevronRef.current.classList.toggle("animate-bounce", shouldBounce);
+  }, []);
+
+  // Throttled animation update via RAF
   const scheduleUpdate = useCallback(() => {
     if (rafIdRef.current === null) {
       rafIdRef.current = requestAnimationFrame(() => {
@@ -90,14 +125,34 @@ export function TrustedBy() {
     }
   }, [updateDOM]);
 
-  // Cleanup RAF on unmount
+  // Setup scroll/resize listeners with passive flag and RAF throttling
   useEffect(() => {
+    isMountedRef.current = true;
+
+    // Initial measurement
+    updateAnchorPosition();
+
+    const handleScroll = () => schedulePositionUpdate();
+    const handleResize = () => schedulePositionUpdate();
+
+    // Add passive listeners for better scroll performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+
     return () => {
+      isMountedRef.current = false;
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+
+      // Cleanup all RAF callbacks
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
       }
+      if (positionRafIdRef.current !== null) {
+        cancelAnimationFrame(positionRafIdRef.current);
+      }
     };
-  }, []);
+  }, [updateAnchorPosition, schedulePositionUpdate]);
 
   // ScrollTrigger for the expanding line animation
   useGSAP(
@@ -109,8 +164,8 @@ export function TrustedBy() {
 
       const trigger = ScrollTrigger.create({
         trigger: sectionRef.current,
-        start: "bottom 90%",  // Start when TrustedBy bottom is 90% down viewport
-        end: chaosSection ? "top top" : "+=300", // End when chaos section reaches top
+        start: "bottom 90%",
+        end: chaosSection ? "top top" : `+=${ANIMATION.FALLBACK_SCROLL_DISTANCE}`,
         endTrigger: chaosSection || undefined,
         scrub: 0.5,
         onUpdate: (self) => {
@@ -172,9 +227,11 @@ export function TrustedBy() {
         ref={lineContainerRef}
         className="fixed z-[80] flex flex-col items-center pointer-events-none"
         style={{
-          left: anchorPos.x,
-          top: anchorPos.y + 16,
-          transform: 'translateX(-50%)'
+          left: 0,
+          top: 0,
+          transform: 'translateX(-50%)',
+          visibility: 'hidden', // Hidden until measured to prevent flash at (0,0)
+          opacity: 0, // Start fully transparent, will be set by scroll progress
         }}
         aria-hidden="true"
       >
@@ -182,12 +239,13 @@ export function TrustedBy() {
         <div
           ref={lineRef}
           className="w-px bg-border"
-          style={{ height: 0 }}
+          style={{ height: 0, opacity: 0 }}
         />
         {/* Chevron at the tip */}
         <div
           ref={chevronRef}
           className="text-muted-foreground transition-transform duration-300 animate-bounce"
+          style={{ opacity: 0 }}
         >
           <ChevronDown className="w-6 h-6" />
         </div>

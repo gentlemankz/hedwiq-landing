@@ -2,7 +2,6 @@
 
 import React, { useRef, useState, useEffect, useCallback, memo } from "react";
 import { ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { cn } from "@/lib/utils";
 import { getCachedIsSafari } from "@/lib/browser";
 import { ChaosLines } from "@/components/ChaosLines";
 import { PainTextCard } from "@/components/PainTextCard";
@@ -119,13 +118,17 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
   // Only state that truly needs React re-renders
   const [showLiveDot, setShowLiveDot] = useState(false);
 
-  // Chaos lines needs progress as prop, so we need minimal state for it
+  // Chaos lines needs progress as prop - use milestone-based updates to reduce re-renders
+  // Only update at key thresholds: 0, 0.1, 0.2, ... 1.0 (10% increments)
   const [chaosProgress, setChaosProgress] = useState(0);
+  const lastChaosProgressRef = useRef(0);
 
-  // Pain card progress state (throttled updates for child component animations)
+  // Pain card progress state - only update when visibility state changes significantly
+  // This prevents unnecessary re-renders during continuous scrolling
   const [painCardProgress, setPainCardProgress] = useState<number[]>(() =>
     PAIN_POINTS.map(() => 0)
   );
+  const lastPainCardProgressRef = useRef<number[]>(PAIN_POINTS.map(() => 0));
 
   // Cached target dot element
   const targetDotRef = useRef<Element | null>(null);
@@ -174,14 +177,13 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
       : 0;
     const morphEased = easeOutCubic(morphProgress);
 
-    // Update chaos progress state only when significantly changed (for ChaosLines)
-    const roundedChaosProgress = Math.round(currentChaosProgress * 100) / 100;
-    setChaosProgress((prev) => {
-      if (Math.abs(prev - roundedChaosProgress) > 0.01) {
-        return roundedChaosProgress;
-      }
-      return prev;
-    });
+    // Update chaos progress state only at milestone thresholds (10% increments)
+    // This dramatically reduces React re-renders during scroll scrubbing
+    const chaosMilestone = Math.round(currentChaosProgress * 10) / 10; // 0, 0.1, 0.2, ... 1.0
+    if (chaosMilestone !== lastChaosProgressRef.current) {
+      lastChaosProgressRef.current = chaosMilestone;
+      setChaosProgress(chaosMilestone);
+    }
 
     // Update header
     if (headerRef.current) {
@@ -237,25 +239,40 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
       cardEl.style.pointerEvents = progress > 0.1 && morphProgress < 0.3 ? "auto" : "none";
     });
 
-    // Update pain card progress state (throttled - only when changed significantly)
-    setPainCardProgress((prev) => {
-      const hasSignificantChange = newCardProgress.some(
-        (val, idx) => Math.abs(val - prev[idx]) > 0.02
-      );
-      return hasSignificantChange ? newCardProgress : prev;
+    // Update pain card progress state only at key visibility milestones
+    // Milestones: 0 (hidden), 0.1 (entering), 0.5 (half visible), 1.0 (fully visible)
+    // This prevents React re-renders during continuous scrolling
+    const cardMilestones = newCardProgress.map(val => {
+      if (val === 0) return 0;
+      if (val < 0.1) return 0;
+      if (val < 0.5) return 0.1;
+      if (val < 1) return 0.5;
+      return 1;
     });
 
-    // Update progress dots
+    const hasVisibilityChange = cardMilestones.some(
+      (milestone, idx) => milestone !== lastPainCardProgressRef.current[idx]
+    );
+
+    if (hasVisibilityChange) {
+      lastPainCardProgressRef.current = cardMilestones;
+      // Pass actual progress values (not milestones) for smooth animations within components
+      setPainCardProgress([...newCardProgress]);
+    }
+
+    // Update progress dots - use classList.toggle instead of rewriting className
     progressDotRefs.current.forEach((dotEl, index) => {
       if (!dotEl) return;
       const pain = PAIN_POINTS[index];
       const progress = getPainProgress(pain.startProgress, pain.endProgress, painProgress);
-      dotEl.style.width = progress > 0 ? "2rem" : "0.5rem";
-      dotEl.style.opacity = String(progress > 0 ? 0.4 + progress * 0.6 : 0.3);
-      dotEl.className = cn(
-        "h-1.5 rounded-full transition-all duration-300",
-        progress > 0 ? "bg-foreground" : "bg-muted-foreground/30"
-      );
+      const isActive = progress > 0;
+
+      dotEl.style.width = isActive ? "2rem" : "0.5rem";
+      dotEl.style.opacity = String(isActive ? 0.4 + progress * 0.6 : 0.3);
+
+      // Toggle classes instead of rewriting className to avoid style recalculation
+      dotEl.classList.toggle("bg-foreground", isActive);
+      dotEl.classList.toggle("bg-muted-foreground/30", !isActive);
     });
 
     // Update center point
