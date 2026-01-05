@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { track } from "@/lib/amplitude";
 
 // ============================================================================
 // App URL Configuration
@@ -37,6 +38,10 @@ export function CTA() {
                 size="lg"
                 className="rounded-full px-10 py-6 text-lg bg-blue-600 text-white hover:bg-blue-700"
                 asChild
+                onClick={() => track({
+                  name: 'Auth CTA Clicked',
+                  properties: { cta_type: 'get_started', location: 'cta_section' }
+                })}
               >
                 <a href={`${APP_URL}/sign-up`}>Get Started</a>
               </Button>

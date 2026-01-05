@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -8,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { track } from "@/lib/amplitude";
 
 // ============================================================================
 // FAQ Data
@@ -77,6 +79,38 @@ function FAQStructuredData() {
 // ============================================================================
 
 export function FAQ() {
+  const [openItem, setOpenItem] = useState<string | undefined>(undefined);
+
+  const handleValueChange = (value: string) => {
+    // Find the FAQ item by ID
+    const item = FAQ_ITEMS.find((faq) => faq.id === value);
+
+    if (value && item) {
+      // Item is being expanded
+      track({
+        name: 'FAQ Item Expanded',
+        properties: {
+          question_id: item.id,
+          question_text: item.question
+        }
+      });
+    } else if (openItem) {
+      // Item is being collapsed
+      const previousItem = FAQ_ITEMS.find((faq) => faq.id === openItem);
+      if (previousItem) {
+        track({
+          name: 'FAQ Item Collapsed',
+          properties: {
+            question_id: previousItem.id,
+            question_text: previousItem.question
+          }
+        });
+      }
+    }
+
+    setOpenItem(value || undefined);
+  };
+
   return (
     <section id="faq" className="w-full py-16 md:py-24 bg-muted/30 scroll-mt-20">
       <FAQStructuredData />
@@ -103,7 +137,13 @@ export function FAQ() {
 
         {/* FAQ Accordion */}
         <AnimatedSection delay={300}>
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            value={openItem}
+            onValueChange={handleValueChange}
+          >
             {FAQ_ITEMS.map((item) => (
               <AccordionItem
                 key={item.id}

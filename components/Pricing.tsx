@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { cn } from "@/lib/utils";
 import { Check, Sparkles } from "lucide-react";
+import { track } from "@/lib/amplitude";
 
 // ============================================================================
 // Configuration
@@ -249,6 +250,15 @@ function PricingCard({
         )}
         size="lg"
         asChild
+        onClick={() => track({
+          name: 'Pricing CTA Clicked',
+          properties: {
+            plan_name: tier.name,
+            billing_cycle: isAnnual ? 'annual' : 'monthly',
+            cta_text: tier.cta,
+            price: price
+          }
+        })}
       >
         <a
           href={ctaHref}
@@ -272,10 +282,23 @@ function BillingToggle({
   isAnnual: boolean;
   onChange: (value: boolean) => void;
 }) {
+  const handleChange = (newValue: boolean) => {
+    if (newValue !== isAnnual) {
+      track({
+        name: 'Billing Toggle Changed',
+        properties: {
+          selected_cycle: newValue ? 'annual' : 'monthly',
+          previous_cycle: isAnnual ? 'annual' : 'monthly'
+        }
+      });
+    }
+    onChange(newValue);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      onChange(!isAnnual);
+      handleChange(!isAnnual);
     }
   };
 
@@ -287,7 +310,7 @@ function BillingToggle({
           "text-sm font-medium transition-colors cursor-pointer",
           !isAnnual ? "text-foreground" : "text-muted-foreground"
         )}
-        onClick={() => onChange(false)}
+        onClick={() => handleChange(false)}
       >
         Monthly
       </span>
@@ -296,7 +319,7 @@ function BillingToggle({
         role="switch"
         aria-checked={isAnnual}
         aria-labelledby="billing-toggle-label"
-        onClick={() => onChange(!isAnnual)}
+        onClick={() => handleChange(!isAnnual)}
         onKeyDown={handleKeyDown}
         className={cn(
           "relative w-14 h-7 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -320,7 +343,7 @@ function BillingToggle({
           "text-sm font-medium transition-colors cursor-pointer",
           isAnnual ? "text-foreground" : "text-muted-foreground"
         )}
-        onClick={() => onChange(true)}
+        onClick={() => handleChange(true)}
       >
         Annual
       </span>

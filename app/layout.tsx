@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { StructuredData } from "@/components/StructuredData";
+import { AmplitudeProvider } from "@/components/AmplitudeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -106,7 +108,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
       >
-        <SmoothScroll>{children}</SmoothScroll>
+        <Suspense fallback={null}>
+          <AmplitudeProvider>
+            <SmoothScroll>{children}</SmoothScroll>
+          </AmplitudeProvider>
+        </Suspense>
       </body>
     </html>
   );

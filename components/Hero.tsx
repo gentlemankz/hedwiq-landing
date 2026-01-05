@@ -9,6 +9,7 @@ import { FakeMeetingRoom } from "@/components/FakeMeetingRoom";
 import { RiskReversal } from "@/components/RiskReversal";
 import { TrustedBy } from "@/components/TrustedBy";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { track } from "@/lib/amplitude";
 
 // ============================================================================
 // App URL Configuration
@@ -73,10 +74,25 @@ export function Hero() {
               {/* CTA Buttons */}
               <AnimatedSection delay={300}>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <a href={`${APP_URL}/sign-up`}>
+                  <a
+                    href={`${APP_URL}/sign-up`}
+                    onClick={() => track({
+                      name: 'Hero CTA Clicked',
+                      properties: { cta_type: 'start_free_trial', location: 'hero' }
+                    })}
+                  >
                     <ShimmerButton className="h-10 px-8 text-sm font-medium">Start Free Trial</ShimmerButton>
                   </a>
-                  <Button variant="outline" size="lg" className="rounded-full px-8" asChild>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="rounded-full px-8"
+                    asChild
+                    onClick={() => track({
+                      name: 'Hero CTA Clicked',
+                      properties: { cta_type: 'watch_demo', location: 'hero' }
+                    })}
+                  >
                     <Link href="/#demo">Watch Demo</Link>
                   </Button>
                 </div>

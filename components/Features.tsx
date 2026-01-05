@@ -9,6 +9,7 @@ import { FakeAgendaUI } from "@/components/FakeAgendaUI";
 import { Sparkles, CheckCircle2, ListTodo, Bot } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/amplitude";
 
 // ============================================================================
 // Subfeature Configuration
@@ -81,8 +82,19 @@ function NoteTakerFeatureSection() {
 
   const activeSubfeature = NOTE_TAKER_SUBFEATURES[activeSubfeatureIndex];
 
-  // Manual selection only
+  // Manual selection with tracking
   const handleSelect = (index: number) => {
+    if (index !== activeSubfeatureIndex) {
+      const subfeature = NOTE_TAKER_SUBFEATURES[index];
+      track({
+        name: 'Feature Subfeature Selected',
+        properties: {
+          feature_name: 'Advanced Note Taker',
+          subfeature_title: subfeature.title,
+          subfeature_index: index
+        }
+      });
+    }
     setActiveSubfeatureIndex(index);
   };
 

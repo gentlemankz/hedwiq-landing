@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { getCachedIsSafari } from "@/lib/browser";
+import { track } from "@/lib/amplitude";
 
 // Subscribe function for useSyncExternalStore (browser type never changes)
 const subscribeNoop = () => () => {};
@@ -95,17 +96,38 @@ function MobileMenu({
             <Link
               key={item.href}
               href={item.href}
-              onClick={onClose}
+              onClick={() => {
+                track({
+                  name: 'Navigation Link Clicked',
+                  properties: { link_label: item.label, link_href: item.href, location: 'mobile_menu' }
+                });
+                onClose();
+              }}
               className="block py-3 text-base font-medium text-foreground hover:text-primary transition-colors"
             >
               {item.label}
             </Link>
           ))}
           <div className="pt-4 space-y-3 border-t border-border mt-4">
-            <Button variant="outline" className="w-full" asChild>
+            <Button
+              variant="outline"
+              className="w-full"
+              asChild
+              onClick={() => track({
+                name: 'Auth CTA Clicked',
+                properties: { cta_type: 'sign_in', location: 'mobile_menu' }
+              })}
+            >
               <a href={`${APP_URL}/sign-in`}>Sign In</a>
             </Button>
-            <Button className="w-full rounded-full bg-blue-600 hover:bg-blue-700" asChild>
+            <Button
+              className="w-full rounded-full bg-blue-600 hover:bg-blue-700"
+              asChild
+              onClick={() => track({
+                name: 'Auth CTA Clicked',
+                properties: { cta_type: 'get_started', location: 'mobile_menu' }
+              })}
+            >
               <a href={`${APP_URL}/sign-up`}>Get Started</a>
             </Button>
           </div>
@@ -130,7 +152,12 @@ export function Header() {
   );
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => !prev);
+    const newState = !isMobileMenuOpen;
+    track({
+      name: 'Mobile Menu Toggled',
+      properties: { action: newState ? 'open' : 'close' }
+    });
+    setIsMobileMenuOpen(newState);
   };
 
   const closeMobileMenu = () => {
@@ -178,6 +205,10 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => track({
+                    name: 'Navigation Link Clicked',
+                    properties: { link_label: item.label, link_href: item.href, location: 'header' }
+                  })}
                   className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {item.label}
@@ -187,10 +218,26 @@ export function Header() {
 
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center gap-3">
-              <Button variant="ghost" size="sm" asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                onClick={() => track({
+                  name: 'Auth CTA Clicked',
+                  properties: { cta_type: 'sign_in', location: 'header' }
+                })}
+              >
                 <a href={`${APP_URL}/sign-in`}>Sign In</a>
               </Button>
-              <Button size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700" asChild>
+              <Button
+                size="sm"
+                className="rounded-full bg-blue-600 hover:bg-blue-700"
+                asChild
+                onClick={() => track({
+                  name: 'Auth CTA Clicked',
+                  properties: { cta_type: 'get_started', location: 'header' }
+                })}
+              >
                 <a href={`${APP_URL}/sign-up`}>Get Started</a>
               </Button>
             </div>
