@@ -424,7 +424,7 @@ export function ChaosToOrderTransition({ children }: ChaosToOrderTransitionProps
   );
 
   return (
-    <div ref={wrapperRef} className="relative">
+    <div ref={wrapperRef} className="relative" data-chaos-section="true">
       {/* Pain Points Section - PINNED during scroll */}
       <section ref={painSectionRef} className="relative w-full">
         <div
