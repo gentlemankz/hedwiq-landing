@@ -66,7 +66,7 @@ export function Hero() {
                 </AnimatedSection>
                 <AnimatedSection delay={200}>
                   <p className="text-lg md:text-xl text-foreground leading-relaxed max-w-2xl">
-                    Luframe is an agentic meeting platform that captures context, extracts insights, and enables action while meetings are still happening.
+                    An ROI-driven meeting platform that protects your time from draining meetings and delivers actions in real time.
                   </p>
                 </AnimatedSection>
               </div>
