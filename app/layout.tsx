@@ -5,6 +5,8 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { StructuredData } from "@/components/StructuredData";
 import { AmplitudeProvider } from "@/components/AmplitudeProvider";
+import { WaitlistProvider } from "@/components/WaitlistContext";
+import { WaitlistModal } from "@/components/WaitlistModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -110,7 +112,10 @@ export default function RootLayout({
       >
         <Suspense fallback={null}>
           <AmplitudeProvider>
-            <SmoothScroll>{children}</SmoothScroll>
+            <WaitlistProvider>
+              <SmoothScroll>{children}</SmoothScroll>
+              <WaitlistModal />
+            </WaitlistProvider>
           </AmplitudeProvider>
         </Suspense>
       </body>

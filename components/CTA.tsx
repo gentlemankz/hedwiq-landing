@@ -1,24 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { track } from "@/lib/amplitude";
-
-// ============================================================================
-// App URL Configuration
-// ============================================================================
-
-function getAppUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (envUrl) return envUrl;
-
-  if (process.env.NODE_ENV === "production") {
-    return "https://app.luframe.com";
-  }
-  return "http://localhost:3000";
-}
-
-const APP_URL = getAppUrl();
+import { WaitlistButton } from "@/components/WaitlistButton";
 
 export function CTA() {
   return (
@@ -32,19 +15,16 @@ export function CTA() {
                 Ready to eliminate post-meeting busywork?
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground max-w-xl">
-                Join teams who are already turning conversations into action in real-time.
+                Be among the first to experience the future of meetings. Limited early access spots available.
               </p>
-              <Button
+              <WaitlistButton
                 size="lg"
                 className="rounded-full px-10 py-6 text-lg bg-blue-600 text-white hover:bg-blue-700"
-                asChild
-                onClick={() => track({
-                  name: 'Auth CTA Clicked',
-                  properties: { cta_type: 'get_started', location: 'cta_section' }
-                })}
+                location="cta_section"
+                ctaType="join_waitlist"
               >
-                <a href={`${APP_URL}/sign-up`}>Get Started</a>
-              </Button>
+                Join Waitlist
+              </WaitlistButton>
             </div>
           </div>
         </AnimatedSection>

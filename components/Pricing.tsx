@@ -1,47 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { cn } from "@/lib/utils";
 import { Check, Sparkles } from "lucide-react";
 import { track } from "@/lib/amplitude";
-
-// ============================================================================
-// Configuration
-// ============================================================================
-
-/**
- * App domain URL for redirects to sign-up/checkout flow
- * In production: https://app.luframe.com
- * In development: http://localhost:3000 (or your local frontend URL)
- *
- * CRITICAL: Default to production URL if not set to prevent broken sign-up flows.
- * In development, NEXT_PUBLIC_APP_URL should be explicitly set in .env.local.
- */
-const APP_URL = (() => {
-  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
-
-  // If explicitly set, use it
-  if (envUrl) {
-    return envUrl;
-  }
-
-  // In production, default to production URL (never localhost)
-  if (process.env.NODE_ENV === "production") {
-    console.warn(
-      "[Pricing] NEXT_PUBLIC_APP_URL not set in production, defaulting to https://app.luframe.com"
-    );
-    return "https://app.luframe.com";
-  }
-
-  // In development, allow localhost fallback but log a warning
-  console.warn(
-    "[Pricing] NEXT_PUBLIC_APP_URL not set, using localhost. Set it in .env.local for production-like testing."
-  );
-  return "http://localhost:3000";
-})();
+import { WaitlistButton } from "@/components/WaitlistButton";
 
 // ============================================================================
 // Pricing Data
@@ -57,33 +22,7 @@ interface PricingTier {
   popular?: boolean;
   features: string[];
   cta: string;
-  /** Plan slug for checkout (e.g., "free", "pro", "business") */
-  planSlug: string | null;
   ctaVariant?: "default" | "outline";
-  /** External link for enterprise/contact */
-  externalHref?: string;
-}
-
-/**
- * Build the CTA href for a pricing tier
- * - Free tier: Direct sign-up without checkout
- * - Paid tiers: Sign-up with plan & billing params (triggers post-signup checkout)
- * - Enterprise: External contact link
- */
-function buildCtaHref(tier: PricingTier, isAnnual: boolean): string {
-  // Enterprise or other tiers with external links
-  if (tier.externalHref) {
-    return tier.externalHref;
-  }
-
-  // Free tier - just sign up, no plan params needed
-  if (tier.planSlug === "free" || tier.planSlug === null) {
-    return `${APP_URL}/sign-up`;
-  }
-
-  // Paid tiers - include plan and billing params
-  const billing = isAnnual ? "annual" : "monthly";
-  return `${APP_URL}/sign-up?plan=${tier.planSlug}&billing=${billing}`;
 }
 
 const PRICING_TIERS: PricingTier[] = [
@@ -99,8 +38,7 @@ const PRICING_TIERS: PricingTier[] = [
       "Advanced Notes",
       "7-day meeting history",
     ],
-    cta: "Get Started",
-    planSlug: "free",
+    cta: "Early Access",
     ctaVariant: "outline",
   },
   {
@@ -119,8 +57,7 @@ const PRICING_TIERS: PricingTier[] = [
       "30-day retention",
       "300 Email Drafts",
     ],
-    cta: "Upgrade to Pro",
-    planSlug: "pro",
+    cta: "Early Access",
     ctaVariant: "outline",
   },
   {
@@ -136,8 +73,7 @@ const PRICING_TIERS: PricingTier[] = [
       "20 GB storage/user",
       "90-day retention",
     ],
-    cta: "Upgrade to Business",
-    planSlug: "business",
+    cta: "Early Access",
   },
   {
     name: "Enterprise",
@@ -153,8 +89,6 @@ const PRICING_TIERS: PricingTier[] = [
       "Custom contracts",
     ],
     cta: "Contact Sales",
-    planSlug: null,
-    externalHref: "/contact",
     ctaVariant: "outline",
   },
 ];
@@ -177,10 +111,6 @@ function PricingCard({
           ((tier.monthlyPrice - tier.annualPrice) / tier.monthlyPrice) * 100
         )
       : 0;
-
-  // Build the CTA href dynamically based on tier and billing selection
-  const ctaHref = buildCtaHref(tier, isAnnual);
-  const isExternalLink = tier.externalHref != null;
 
   return (
     <div
@@ -242,31 +172,18 @@ function PricingCard({
         ))}
       </ul>
 
-      <Button
+      <WaitlistButton
         variant={tier.ctaVariant || "default"}
         className={cn(
           "w-full rounded-full",
           tier.popular && "bg-blue-600 hover:bg-blue-700 text-white"
         )}
         size="lg"
-        asChild
-        onClick={() => track({
-          name: 'Pricing CTA Clicked',
-          properties: {
-            plan_name: tier.name,
-            billing_cycle: isAnnual ? 'annual' : 'monthly',
-            cta_text: tier.cta,
-            price: price
-          }
-        })}
+        location="pricing"
+        ctaType={`pricing_${tier.name.toLowerCase()}`}
       >
-        <a
-          href={ctaHref}
-          {...(isExternalLink ? {} : { rel: undefined })}
-        >
-          {tier.cta}
-        </a>
-      </Button>
+        {tier.cta}
+      </WaitlistButton>
     </div>
   );
 }

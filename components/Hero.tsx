@@ -1,31 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { FakeMeetingRoom } from "@/components/FakeMeetingRoom";
 import { RiskReversal } from "@/components/RiskReversal";
 import { TrustedBy } from "@/components/TrustedBy";
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { track } from "@/lib/amplitude";
-
-// ============================================================================
-// App URL Configuration
-// ============================================================================
-
-function getAppUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (envUrl) return envUrl;
-
-  if (process.env.NODE_ENV === "production") {
-    return "https://app.luframe.com";
-  }
-  return "http://localhost:3000";
-}
-
-const APP_URL = getAppUrl();
+import { WaitlistButton } from "@/components/WaitlistButton";
 
 export function Hero() {
   return (
@@ -65,37 +46,22 @@ export function Hero() {
                   </h1>
                 </AnimatedSection>
                 <AnimatedSection delay={200}>
-                  <p className="text-lg md:text-xl text-foreground leading-relaxed max-w-2xl">
+                  <p className="text-base md:text-lg text-foreground leading-relaxed max-w-2xl">
                     An ROI-driven meeting platform that protects your time from draining meetings and delivers actions in real time.
                   </p>
                 </AnimatedSection>
               </div>
 
-              {/* CTA Buttons */}
+              {/* CTA Button */}
               <AnimatedSection delay={300}>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <a
-                    href={`${APP_URL}/sign-up`}
-                    onClick={() => track({
-                      name: 'Hero CTA Clicked',
-                      properties: { cta_type: 'start_free_trial', location: 'hero' }
-                    })}
-                  >
-                    <ShimmerButton className="h-10 px-8 text-sm font-medium">Start Free Trial</ShimmerButton>
-                  </a>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full px-8"
-                    asChild
-                    onClick={() => track({
-                      name: 'Hero CTA Clicked',
-                      properties: { cta_type: 'watch_demo', location: 'hero' }
-                    })}
-                  >
-                    <Link href="/#demo">Watch Demo</Link>
-                  </Button>
-                </div>
+                <WaitlistButton
+                  shimmer
+                  shimmerClassName="h-10 px-8 text-sm font-medium"
+                  location="hero"
+                  ctaType="join_waitlist"
+                >
+                  Get Private Access
+                </WaitlistButton>
               </AnimatedSection>
 
               {/* Risk Reversal */}

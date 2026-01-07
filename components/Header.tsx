@@ -8,31 +8,12 @@ import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { getCachedIsSafari } from "@/lib/browser";
 import { track } from "@/lib/amplitude";
+import { WaitlistButton } from "@/components/WaitlistButton";
 
 // Subscribe function for useSyncExternalStore (browser type never changes)
 const subscribeNoop = () => () => {};
 const getIsSafariSnapshot = () => getCachedIsSafari();
 const getIsSafariServerSnapshot = () => false;
-
-// ============================================================================
-// App URL Configuration
-// ============================================================================
-
-/**
- * Get the app URL for auth redirects.
- * Falls back to production URL in production, localhost in development.
- */
-function getAppUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (envUrl) return envUrl;
-
-  if (process.env.NODE_ENV === "production") {
-    return "https://app.luframe.com";
-  }
-  return "http://localhost:3000";
-}
-
-const APP_URL = getAppUrl();
 
 // ============================================================================
 // Navigation Configuration
@@ -109,27 +90,14 @@ function MobileMenu({
             </Link>
           ))}
           <div className="pt-4 space-y-3 border-t border-border mt-4">
-            <Button
+            <WaitlistButton
               variant="outline"
-              className="w-full"
-              asChild
-              onClick={() => track({
-                name: 'Auth CTA Clicked',
-                properties: { cta_type: 'sign_in', location: 'mobile_menu' }
-              })}
+              className="w-full rounded-full"
+              location="mobile_menu"
+              ctaType="join_waitlist"
             >
-              <a href={`${APP_URL}/sign-in`}>Sign In</a>
-            </Button>
-            <Button
-              className="w-full rounded-full bg-blue-600 hover:bg-blue-700"
-              asChild
-              onClick={() => track({
-                name: 'Auth CTA Clicked',
-                properties: { cta_type: 'get_started', location: 'mobile_menu' }
-              })}
-            >
-              <a href={`${APP_URL}/sign-up`}>Get Started</a>
-            </Button>
+              Early Access
+            </WaitlistButton>
           </div>
         </div>
       </nav>
@@ -216,30 +184,16 @@ export function Header() {
               ))}
             </div>
 
-            {/* Desktop CTA Buttons */}
+            {/* Desktop CTA Button */}
             <div className="hidden md:flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                asChild
-                onClick={() => track({
-                  name: 'Auth CTA Clicked',
-                  properties: { cta_type: 'sign_in', location: 'header' }
-                })}
-              >
-                <a href={`${APP_URL}/sign-in`}>Sign In</a>
-              </Button>
-              <Button
+              <WaitlistButton
                 size="sm"
                 className="rounded-full bg-blue-600 hover:bg-blue-700"
-                asChild
-                onClick={() => track({
-                  name: 'Auth CTA Clicked',
-                  properties: { cta_type: 'get_started', location: 'header' }
-                })}
+                location="header"
+                ctaType="join_waitlist"
               >
-                <a href={`${APP_URL}/sign-up`}>Get Started</a>
-              </Button>
+                Early Access
+              </WaitlistButton>
             </div>
 
             {/* Mobile Menu Toggle */}

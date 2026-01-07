@@ -1,22 +1,29 @@
-import { Check } from "lucide-react";
-
 const advantages = [
-  "Bot free",
-  "10x effective meetings",
-  "Simple. Browser-based.",
+  { stat: "$12,000+", description: "saved per employee/year" },
+  { stat: "10x", description: "effective meetings" },
+  { stat: "95%", description: "outcomes delivered" },
 ];
 
 export function RiskReversal() {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:gap-x-12">
-      {advantages.map((text, index) => (
-        <div key={index} className="flex items-center gap-2">
-          <Check className="size-5 text-green-500" strokeWidth={2.5} />
-          <span className="text-sm md:text-base text-foreground font-medium">
-            {text}
-          </span>
-        </div>
-      ))}
+    <div className="w-full flex justify-center">
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 md:gap-8">
+        {advantages.map((item, index) => (
+          <div key={index} className="flex items-center gap-4 sm:gap-6 md:gap-8">
+            <div className="flex flex-col items-center text-center">
+              <span className="text-lg md:text-xl font-bold text-foreground">
+                {item.stat}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {item.description}
+              </span>
+            </div>
+            {index < advantages.length - 1 && (
+              <div className="hidden sm:block h-10 w-px bg-border" />
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -57,7 +57,12 @@ export type AnalyticsEvent =
   | { name: 'Demo Interaction'; properties: { demo_type: 'meeting_room' | 'transcription' | 'note_taker' | 'email_draft' | 'agenda'; interaction_type: string } }
 
   // External Link Events
-  | { name: 'External Link Clicked'; properties: { link_url: string; link_text: string; location: string } };
+  | { name: 'External Link Clicked'; properties: { link_url: string; link_text: string; location: string } }
+
+  // Waitlist Events (no PII - email removed for privacy compliance)
+  | { name: 'Waitlist CTA Clicked'; properties: { cta_type: string; location: string } }
+  | { name: 'Waitlist Step Completed'; properties: { step: 1 | 2 } }
+  | { name: 'Waitlist Submitted'; properties: { pain_points: string[]; has_other: boolean; pain_points_count: number } };
 
 // ============================================================================
 // Initialization
