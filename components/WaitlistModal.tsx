@@ -15,9 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useWaitlist } from "@/components/WaitlistContext";
+import { stopLenis, startLenis } from "@/components/SmoothScroll";
 import { cn } from "@/lib/utils";
 import { track } from "@/lib/amplitude";
-import { ArrowRight, Check, Loader2, Sparkles, AlertCircle } from "lucide-react";
+import { ArrowRight, Check, Loader2, AlertCircle } from "lucide-react";
 import { PAIN_POINTS, type PainPointId } from "@/db/schema";
 import {
   waitlistStep1Schema,
@@ -149,15 +150,21 @@ function Step2Form({
 
   const displayError = validationError || apiError;
 
+  // Separate "other" from the rest
+  const mainPainPoints = PAIN_POINTS.filter((p) => p.id !== "other");
+  const otherOption = PAIN_POINTS.find((p) => p.id === "other");
+
   return (
     <div className="space-y-4">
-      <div className="space-y-3" role="group" aria-label="Select your challenges">
-        {PAIN_POINTS.map((point) => (
-          <div key={point.id}>
+      <div role="group" aria-label="Select your challenges">
+        {/* Responsive grid: 1 column on narrow screens, 2 columns on wider */}
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-1.5 min-[360px]:gap-2 max-h-[45vh] sm:max-h-[50vh] overflow-y-auto overscroll-contain -mx-1 px-1">
+          {mainPainPoints.map((point) => (
             <label
+              key={point.id}
               htmlFor={`pain-point-${point.id}`}
               className={cn(
-                "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all",
+                "flex items-center gap-1.5 min-[360px]:gap-2 p-2 min-[360px]:p-2.5 sm:p-3 rounded-lg border cursor-pointer transition-all text-left",
                 selectedPainPoints.has(point.id)
                   ? "border-blue-600 bg-blue-50 dark:bg-blue-950/30"
                   : "border-border hover:border-muted-foreground/50"
@@ -167,21 +174,43 @@ function Step2Form({
                 id={`pain-point-${point.id}`}
                 checked={selectedPainPoints.has(point.id)}
                 onCheckedChange={() => togglePainPoint(point.id)}
+                className="shrink-0 size-4"
               />
-              <span className="text-sm font-medium">{point.label}</span>
+              <span className="text-[11px] min-[360px]:text-xs sm:text-sm font-medium leading-snug">{point.label}</span>
             </label>
-            {point.id === "other" && selectedPainPoints.has("other") && (
-              <Input
-                className="mt-2 ml-6"
-                placeholder="Tell us more..."
-                value={otherText}
-                onChange={(e) => setOtherText(e.target.value)}
-                maxLength={500}
-                aria-label="Other challenge details"
+          ))}
+          {otherOption && (
+            <label
+              htmlFor={`pain-point-${otherOption.id}`}
+              className={cn(
+                "flex items-center gap-1.5 min-[360px]:gap-2 p-2 min-[360px]:p-2.5 sm:p-3 rounded-lg border cursor-pointer transition-all min-[360px]:col-span-2",
+                selectedPainPoints.has(otherOption.id)
+                  ? "border-blue-600 bg-blue-50 dark:bg-blue-950/30"
+                  : "border-border hover:border-muted-foreground/50"
+              )}
+            >
+              <Checkbox
+                id={`pain-point-${otherOption.id}`}
+                checked={selectedPainPoints.has(otherOption.id)}
+                onCheckedChange={() => togglePainPoint(otherOption.id)}
+                className="shrink-0 size-4"
               />
-            )}
-          </div>
-        ))}
+              <span className="text-[11px] min-[360px]:text-xs sm:text-sm font-medium">{otherOption.label}</span>
+            </label>
+          )}
+        </div>
+
+        {/* Other text input (shown when "other" is selected) */}
+        {selectedPainPoints.has("other") && (
+          <Input
+            className="mt-3"
+            placeholder="Tell us more..."
+            value={otherText}
+            onChange={(e) => setOtherText(e.target.value)}
+            maxLength={500}
+            aria-label="Other challenge details"
+          />
+        )}
       </div>
 
       {displayError && (
@@ -191,11 +220,11 @@ function Step2Form({
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex gap-2 sm:gap-3">
         <Button
           type="button"
           variant="outline"
-          className="flex-1 rounded-full"
+          className="flex-1 rounded-full text-sm sm:text-base h-9 sm:h-10"
           onClick={onBack}
           disabled={isLoading}
         >
@@ -203,17 +232,14 @@ function Step2Form({
         </Button>
         <Button
           type="button"
-          className="flex-1 rounded-full bg-blue-600 hover:bg-blue-700"
+          className="flex-1 rounded-full bg-blue-600 hover:bg-blue-700 text-sm sm:text-base h-9 sm:h-10"
           onClick={handleSubmit}
           disabled={isLoading}
         >
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            <>
-              Join Waitlist
-              <Sparkles className="size-4 ml-2" />
-            </>
+            "Join Waitlist"
           )}
         </Button>
       </div>
@@ -278,6 +304,15 @@ export function WaitlistModal() {
   // Refs for cleanup
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isSubmittingRef = useRef(false);
+
+  // Stop Lenis smooth scroll when dialog opens, restart when closed
+  useEffect(() => {
+    if (isOpen) {
+      stopLenis();
+    } else {
+      startLenis();
+    }
+  }, [isOpen]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -380,17 +415,24 @@ export function WaitlistModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md" showCloseButton={step !== 2}>
+      <DialogContent
+        className={cn(
+          "max-h-[90vh] overflow-y-auto p-4 sm:p-6",
+          "sm:max-w-md",
+          step === 1 && "sm:max-w-xl"
+        )}
+        showCloseButton={step !== 2}
+      >
         {step < 2 && (
           <>
             <StepIndicator currentStep={step} totalSteps={2} />
             <DialogHeader>
-              <DialogTitle className="text-center">
+              <DialogTitle className="text-center text-base sm:text-lg">
                 {step === 0
                   ? "Join the Exclusive Early Access"
                   : "What challenges do you face?"}
               </DialogTitle>
-              <DialogDescription className="text-center">
+              <DialogDescription className="text-center text-xs sm:text-sm">
                 {step === 0
                   ? "Be among the first to experience the future of meetings. Limited spots available."
                   : "Help us understand your needs so we can serve you better."}

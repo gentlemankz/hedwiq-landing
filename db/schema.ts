@@ -2,13 +2,13 @@ import { pgTable, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 
 // Pain points that users can select during onboarding
 export const PAIN_POINTS = [
-  { id: "note_taking", label: "Taking notes during meetings" },
-  { id: "action_items", label: "Tracking action items and follow-ups" },
-  { id: "meeting_prep", label: "Preparing for meetings" },
-  { id: "meeting_overload", label: "Too many meetings" },
-  { id: "missed_context", label: "Missing context from past meetings" },
-  { id: "email_followups", label: "Writing follow-up emails" },
-  { id: "staying_focused", label: "Staying focused during meetings" },
+  { id: "unclear_agenda", label: "No clear agenda or meeting goals" },
+  { id: "action_items_lost", label: "Action items get lost after meetings" },
+  { id: "no_decisions", label: "Decisions don't get made" },
+  { id: "poor_followup", label: "Poor post-meeting follow-up" },
+  { id: "meeting_overload", label: "Too many unproductive meetings" },
+  { id: "no_documentation", label: "Lack of meeting documentation" },
+  { id: "unclear_roles", label: "Unclear roles and accountability" },
   { id: "other", label: "Other" },
 ] as const;
 

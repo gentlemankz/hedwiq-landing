@@ -171,6 +171,15 @@ html.lenis, html.lenis body {
   .font-koho {
     font-family: 'KoHo', sans-serif;
   }
+
+  /* Hide scrollbar for horizontal slider */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Always visible scrollbar for fake meeting room */

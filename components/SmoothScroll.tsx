@@ -5,6 +5,17 @@ import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { getCachedIsSafari } from "@/lib/browser";
 
+// Module-level reference for scroll control from outside (e.g., stop when modal opens)
+let globalLenisInstance: Lenis | null = null;
+
+export function stopLenis() {
+  globalLenisInstance?.stop();
+}
+
+export function startLenis() {
+  globalLenisInstance?.start();
+}
+
 interface SmoothScrollProps {
   children: React.ReactNode;
 }
@@ -40,6 +51,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     });
 
     lenisRef.current = lenis;
+    globalLenisInstance = lenis;
 
     // Setup ScrollTrigger scroller proxy for proper Lenis integration
     // This fixes conflicts between Lenis transforms and ScrollTrigger pinning
@@ -103,6 +115,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
       // Destroy Lenis instance
       lenis.destroy();
       lenisRef.current = null;
+      globalLenisInstance = null;
     };
   }, []);
 
