@@ -1,20 +1,26 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef } from "react";
+// COMMENTED OUT: useState was used by NoteTakerFeatureSection
+// import { useState } from "react";
 import Image from "next/image";
 import { FakeTranscriptionUI } from "@/components/FakeTranscriptionUI";
-import { FakeNoteTakerUI, type NoteTakerMode } from "@/components/FakeNoteTakerUI";
+// COMMENTED OUT: Note Taker feature - kept for potential future use
+// import { FakeNoteTakerUI, type NoteTakerMode } from "@/components/FakeNoteTakerUI";
+import { FakeMeetingAlertsUI } from "@/components/FakeMeetingAlertsUI";
 import { FakeEmailDraftUI } from "@/components/FakeEmailDraftUI";
 import { FakeAgendaUI } from "@/components/FakeAgendaUI";
-import { Sparkles, CheckCircle2, ListTodo, Bot } from "lucide-react";
+import { Sparkles, CheckCircle2, ListTodo, Bot, Clock, UserX, RefreshCcw } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { cn } from "@/lib/utils";
-import { track } from "@/lib/amplitude";
+// COMMENTED OUT: track was used by NoteTakerFeatureSection for analytics
+// import { track } from "@/lib/amplitude";
 
 // ============================================================================
-// Subfeature Configuration
+// COMMENTED OUT: Subfeature Configuration for Note Taker
+// Kept for potential future use
 // ============================================================================
-
+/*
 interface Subfeature {
   id: string;
   title: string;
@@ -36,11 +42,13 @@ const NOTE_TAKER_SUBFEATURES: Subfeature[] = [
     mode: "notes-with-quotes",
   },
 ];
+*/
 
 // ============================================================================
-// Subfeature List Component
+// COMMENTED OUT: Subfeature List Component for Note Taker
+// Kept for potential future use
 // ============================================================================
-
+/*
 function SubfeatureList({
   subfeatures,
   activeIndex,
@@ -72,11 +80,13 @@ function SubfeatureList({
     </div>
   );
 }
+*/
 
 // ============================================================================
-// Note Taker Feature Section (with scroll-based switcher)
+// COMMENTED OUT: Note Taker Feature Section (with scroll-based switcher)
+// Kept for potential future use
 // ============================================================================
-
+/*
 function NoteTakerFeatureSection() {
   const [activeSubfeatureIndex, setActiveSubfeatureIndex] = useState(0);
 
@@ -100,7 +110,6 @@ function NoteTakerFeatureSection() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
-      {/* Text Description - First on mobile/tablet */}
       <AnimatedSection delay={300} animation="slide-right" className="order-1 lg:order-2">
         <div className="flex flex-col gap-4 sm:gap-6 lg:pl-4">
           <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
@@ -109,20 +118,110 @@ function NoteTakerFeatureSection() {
             <span className="text-primary">Quote Transcription</span>
           </h3>
 
-          {/* Subfeature Switcher */}
           <SubfeatureList
             subfeatures={NOTE_TAKER_SUBFEATURES}
             activeIndex={activeSubfeatureIndex}
             onSelect={handleSelect}
           />
 
-          {/* Active subfeature description */}
           <p
             key={activeSubfeature.id}
             className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md animate-fade-in"
           >
             {activeSubfeature.description}
           </p>
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection delay={400} animation="slide-left" className="order-2 lg:order-1">
+        <div className="relative">
+          <div className="hidden sm:block absolute -top-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="hidden sm:block absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative w-full aspect-[4/5] sm:aspect-[4/4] overflow-hidden rounded-md shadow-2xl">
+            <Image
+              src="/art2.jpg"
+              alt="Team taking notes"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+
+            <div className="absolute inset-3 sm:inset-4 md:inset-6 lg:inset-8">
+              <FakeNoteTakerUI mode={activeSubfeature.mode} />
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+    </div>
+  );
+}
+*/
+
+// ============================================================================
+// Alert Detection Feature Section (Smart Meeting Reviewer)
+// ============================================================================
+
+function AlertDetectionFeatureSection() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 lg:gap-8 items-center max-w-5xl mx-auto">
+      {/* Text Description - First on mobile/tablet */}
+      <AnimatedSection delay={300} animation="slide-right" className="order-1 lg:order-2">
+        <div className="flex flex-col gap-4 sm:gap-6 lg:pl-4">
+          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
+            Smart Meeting
+            <br />
+            <span className="text-primary">Reviewer</span>
+          </h3>
+
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
+            Luframe monitors your meeting and surfaces issues before they become problems. Get notified about stalled discussions, unassigned actions, and looping topics.
+          </p>
+
+          {/* Divider */}
+          <div className="w-full max-w-md h-px bg-border" />
+
+          {/* Alert highlights */}
+          <div className="flex flex-col gap-3 sm:gap-4">
+            {/* Decision Detection */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <Clock className="size-4 sm:size-5 text-amber-500" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-medium">Decision Detection</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  Alerts when no decisions made for extended periods
+                </p>
+              </div>
+            </div>
+
+            {/* Owner Assignment */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <UserX className="size-4 sm:size-5 text-red-500" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-medium">Owner Assignment</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  Catches action items without assignees
+                </p>
+              </div>
+            </div>
+
+            {/* Topic Loop Detection */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-white/10 border border-border shadow-sm">
+                <RefreshCcw className="size-4 sm:size-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-medium">Topic Loop Detection</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  Identifies circular discussions without resolution
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </AnimatedSection>
 
@@ -138,15 +237,15 @@ function NoteTakerFeatureSection() {
             {/* Background Image */}
             <Image
               src="/art2.jpg"
-              alt="Team taking notes"
+              alt="Team meeting intelligence"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
 
-            {/* Note Taker UI overlaid on image */}
+            {/* Meeting Alerts UI overlaid on image */}
             <div className="absolute inset-3 sm:inset-4 md:inset-6 lg:inset-8">
-              <FakeNoteTakerUI mode={activeSubfeature.mode} />
+              <FakeMeetingAlertsUI />
             </div>
           </div>
         </div>
@@ -499,9 +598,10 @@ export function Features({ showLiveDot = false }: FeaturesProps) {
         </div>
         </div>
 
-        {/* Feature 2: Advanced Note Taker (with subfeature switcher) */}
+        {/* Feature 2: Smart Meeting Reviewer */}
+        {/* COMMENTED OUT: Previously Note Taker - <NoteTakerFeatureSection /> */}
         <div className="border-t border-border pt-12 md:pt-16 lg:pt-20 pb-12 md:pb-16 lg:pb-20">
-          <NoteTakerFeatureSection />
+          <AlertDetectionFeatureSection />
         </div>
 
         {/* Feature 3: Real-Time Email Drafts */}
