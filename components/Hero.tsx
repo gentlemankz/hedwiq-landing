@@ -46,8 +46,8 @@ export function Hero() {
                   </h1>
                 </AnimatedSection>
                 <AnimatedSection delay={200}>
-                  <p className="text-base md:text-lg text-foreground leading-relaxed max-w-3xl">
-                    An ROI-driven meeting platform for teams that optimize for outcomes, not attendance.
+                  <p className="text-base md:text-lg text-foreground leading-relaxed max-w-xl">
+                    An ROI-driven meeting platform for outcome-focused teams seeking maximum impact per hour
                   </p>
                 </AnimatedSection>
               </div>
