@@ -168,10 +168,8 @@ function AlertDetectionFeatureSection() {
       {/* Text Description - First on mobile/tablet */}
       <AnimatedSection delay={300} animation="slide-right" className="order-1 lg:order-2">
         <div className="flex flex-col gap-4 sm:gap-6 lg:pl-4">
-          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
-            Smart Meeting
-            <br />
-            <span className="text-primary">Reviewer</span>
+          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-xl font-bold text-foreground leading-tight">
+            Meeting Health with Context and Memory
           </h3>
 
           <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
